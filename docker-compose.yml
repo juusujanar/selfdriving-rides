@@ -1,0 +1,8 @@
+version: "3"
+services:
+  web:
+    image: nginx:1.15-alpine
+    volumes:
+    - ./:/usr/share/nginx/html:ro
+    ports:
+    - 4000:80
