@@ -18,11 +18,15 @@ Original task: https://storage.googleapis.com/coding-competitions-staging.appspo
 - Open browser at http://localhost:4000
 
 #### If you do not have
-- `yarn install` or `npm install`
+- `yarn` or `npm install`
 - `yarn start` or `npm run start`
 - Open browser at http://localhost:4000
 
+## Build production
+Project is automatically build and deployed to Netlify.  
+If you want to do it yourself, use `yarn build`.
+
 ## Tools
-- JavaScript (compiled to ES2015)
+- JavaScript (compiled to ES2015) & Webpack
 - Teeny tiny bit of HTML5
 - PixiJs - https://pixijs.io/
