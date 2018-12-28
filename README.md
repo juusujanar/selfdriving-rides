@@ -1,5 +1,7 @@
 # Self-driving rides
 
+Available at https://rides.jjdev.eu
+
 Janar Juusu (@juusujanar), Andreas Baum (@Monkey911)
 
 Given a set of requested rides, the application will eventually show cars driving and taking commuters from their origins to their destinations.
