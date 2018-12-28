@@ -1,0 +1,22 @@
+html {
+  font-family: 'Roboto', sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+table {
+  border: 1px solid black;
+  float: left;
+}
+
+th {
+  text-align: left;
+}
+
+.information {
+  flex-wrap: wrap;
+  flex-direction: row;
+}

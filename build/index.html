@@ -2,12 +2,47 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <title>Self-driving rides</title>
+  <meta charset="utf-8">
+  <title>Self-driving rides</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+  <div class="container">
+
+    <div class="configuration">
+      <form>
+        <fieldset>
+          <legend>Configure the simulation</legend>
+          <label>Columns (x)</label>
+          <input type="number" id="columns" />
+          <label>Rows (y)</label>
+          <input type="number" id="rows" />
+          <!-- <p>
+            <label>Text Area</label>
+            <textarea id="myTextArea"
+                        rows = "3"
+                        cols = "80">Your text here</textarea>
+          </p> -->
+        </fieldset>
+      </form>
+      <button onClick="saveConfiguration()">Reload to apply changes</button>
+    </div>
+
+    <div class="information">
+      <h3>Vehicles</h3>
+      <div id="vehicles"></div>
+
+      <h3>Pending rides</h3>
+      <div id="rides"></div>
+    </div>
+
     <script src="assets/bundle.js"></script>
+  
+  </div>
 </body>
 
 </html>
