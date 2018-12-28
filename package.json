@@ -1,0 +1,22 @@
+{
+  "name": "selfdriving-rides",
+  "version": "1.0.0",
+  "repository": "git@github.com:juusujanar/selfdriving-rides.git",
+  "author": "Janar Juusu <janar.juusu@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack-dev-server --host 0.0.0.0",
+    "build": "webpack --mode production"
+  },
+  "devDependencies": {
+    "eslint": "^5.11.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "webpack": "^4.28.2",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.14"
+  },
+  "dependencies": {
+    "pixi.js": "^4.8.4"
+  }
+}

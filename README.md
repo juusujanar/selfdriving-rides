@@ -12,13 +12,15 @@ Original task: https://storage.googleapis.com/coding-competitions-staging.appspo
 
 #### If you have Docker & docker-compose
 - Clone the repo
-- ```docker-compose up -d```
+- ```docker-compose up```
 - Open browser at http://localhost:4000
 
 #### If you do not have
-- Get it. Or figure it out on your own
+- `yarn install` or `npm install`
+- `yarn start` or `npm run start`
+- Open browser at http://localhost:4000
 
 ## Tools
-- JavaScript (version TBD)
+- JavaScript (compiled to ES2015)
 - Teeny tiny bit of HTML5
 - PixiJs - https://pixijs.io/
