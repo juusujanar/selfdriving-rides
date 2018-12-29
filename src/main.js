@@ -35,12 +35,9 @@ function calcRectSize(canvasWidthOrHeight, columnOrRowCount, roadSize) {
   return unused / columnOrRowCount;
 }
 
-function drawVerticalLines(x, y, rectWidth, rectHeight,  roadWidth) {
-  const lineWidth = 2;
-  const lineLength = 10;
-  const missingLineLength = 10;
-  const xLine = x + rectWidth + roadWidth / 2 - lineWidth / 2;
 
+function drawVerticalLines(x, y, rectWidth, rectHeight,  roadWidth, lineWidth, lineLength, missingLineLength) {
+  const xLine = x + rectWidth + roadWidth / 2 - lineWidth / 2;
   const linesCount = Math.floor(rectHeight / (lineLength + missingLineLength));
   const linesLength = linesCount * lineLength + (linesCount - 1) * missingLineLength;
   const linesEdgeFromCrossing = (rectHeight - linesLength) / 2;
@@ -56,6 +53,25 @@ function drawVerticalLines(x, y, rectWidth, rectHeight,  roadWidth) {
     currentY += lineLength + missingLineLength;
   }
 }
+
+function drawHorizontalLines(x, y, rectWidth, rectHeight, roadHeight, lineWidth, lineLength, missingLineLength) {
+  const yLine = y + rectHeight + roadHeight / 2 - lineWidth / 2;
+  const linesCount = Math.floor(rectWidth / (lineLength + missingLineLength));
+  const linesLength = linesCount * lineLength + (linesCount - 1) * missingLineLength;
+  const linesEdgeFromCrossing = (rectWidth - linesLength) / 2;
+
+  //drawing lines and increasing its y position
+  let currentX = x + linesEdgeFromCrossing;
+  let rectangle = new PIXI.Graphics();
+  for (let i = 0; i < linesCount; i++) {
+    rectangle.beginFill(lineColorOnRoad);
+    rectangle.drawRect(currentX, yLine, lineLength, lineWidth);
+    rectangle.endFill();
+    app.stage.addChild(rectangle);
+    currentX += lineLength + missingLineLength;
+  }
+}
+
 
 function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount){
   // if you want to play with road/rectangle sizes then just adjust roadWidth and roadHeight
@@ -77,8 +93,9 @@ function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount){
       rectangle.drawRect(x, y, rectWidth, rectHeight);
       rectangle.endFill();
       app.stage.addChild(rectangle);
-      // drawing vertical road lines between two rectangles. (it prolly is faster outside of loop)
-      drawVerticalLines(x, y, rectWidth, rectHeight, roadWidth);
+      // drawing road lines between two rectangles. (it prolly is faster outside of loop)
+      drawVerticalLines(x, y, rectWidth, rectHeight, roadWidth, 2, 10, 10);
+      drawHorizontalLines(x, y, rectWidth, rectHeight, roadHeight, 2, 10, 10);
       //changing x ready for another rectangle
       x = x + roadWidth + rectWidth
     }
