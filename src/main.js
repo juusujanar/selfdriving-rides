@@ -75,11 +75,13 @@ function drawHorizontalLines(x, y, rectWidth, rectHeight, roadHeight, lineWidth,
 
 function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount){
   // if you want to play with road/rectangle sizes then just adjust roadWidth and roadHeight
-  const roadWidth = 40 + 5 * (maxColumnCount - columnCount - 1);
-  const roadHeight = 40 + 5 * (maxRowCount - rowCount - 1);
+  const roadWidth = 60 + 5 * (maxColumnCount - columnCount - 1);
+  const roadHeight = 60 + 5 * (maxRowCount - rowCount - 1);
+  // making the roadHeight and roadWidth equal to the smaller value of them
+  const roadSize = Math.min(roadWidth, roadHeight);
 
-  const rectWidth = calcRectSize(RESOLUTION_X, columnCount, roadWidth);
-  const rectHeight = calcRectSize(RESOLUTION_Y, rowCount, roadHeight);
+  const rectWidth = calcRectSize(RESOLUTION_X, columnCount, roadSize);
+  const rectHeight = calcRectSize(RESOLUTION_Y, rowCount, roadSize);
 
   let y = -rectHeight / 2;
   let rectangle = new PIXI.Graphics();
@@ -94,12 +96,12 @@ function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount){
       rectangle.endFill();
       app.stage.addChild(rectangle);
       // drawing road lines between two rectangles. (it prolly is faster outside of loop)
-      drawVerticalLines(x, y, rectWidth, rectHeight, roadWidth, 2, 10, 10);
-      drawHorizontalLines(x, y, rectWidth, rectHeight, roadHeight, 2, 10, 10);
+      drawVerticalLines(x, y, rectWidth, rectHeight, roadSize, 2, 10, 10);
+      drawHorizontalLines(x, y, rectWidth, rectHeight, roadSize, 2, 10, 10);
       //changing x ready for another rectangle
-      x = x + roadWidth + rectWidth
+      x = x + roadSize + rectWidth
     }
-    y = y + roadHeight + rectHeight;
+    y = y + roadSize + rectHeight;
   }
 }
 
