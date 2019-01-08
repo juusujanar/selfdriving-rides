@@ -8,6 +8,7 @@
         "import/no-default-export": "on",
         "no-plusplus": "off",
         "no-console": "off",
-        "object-curly-newline": "off"
+        "object-curly-newline": "off",
+        "no-param-reassign": "off"
     }
 }

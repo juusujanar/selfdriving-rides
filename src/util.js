@@ -9,3 +9,43 @@
 export function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+/**
+ * We start coordinates at (0,0) and end at (9,9)
+ * Coordinate 0,0 so upper-left intersection is at (50,40)
+ * Next x intersection is +100, so (150,40)
+ * Next y intersection is +75, so (50,115) or (150,115)
+ */
+
+const xStart = 55;
+const xStep = 100;
+const yStart = 52;
+const yStep = 75;
+
+export function xCoordToPixel(coord) {
+  if (coord < 0 || coord > 9) {
+    throw new Error(`X coordinate out of bounds: ${coord}`);
+  }
+  return xStart + coord * xStep;
+}
+
+export function xPixelToCoord(pixel) {
+  if (pixel < 0 || pixel > 1024) {
+    throw new Error(`X pixel out of bounds: ${pixel}`);
+  }
+  return (pixel - xStart) / xStep;
+}
+
+export function yCoordToPixel(coord) {
+  if (coord < 0 || coord > 9) {
+    throw new Error(`Y coordinate out of bounds: ${coord}`);
+  }
+  return yStart + coord * yStep;
+}
+
+export function yPixelToCoord(pixel) {
+  if (pixel < 0 || pixel > 1024) {
+    throw new Error(`Y pixel out of bounds: ${pixel}`);
+  }
+  return (pixel - yStart) / yStep;
+}

@@ -1,7 +1,8 @@
 import * as PIXI from 'pixi.js';
 import * as updater from './updateFrontend';
 import * as rides from './rides';
-import { getDefaultVehicles } from './vehicles';
+import * as vehicles from './vehicles';
+import { xCoordToPixel, yCoordToPixel } from './util';
 
 // General configuration of the field sizes
 const ROWS = localStorage.getItem('rows') || 10;
@@ -26,7 +27,7 @@ window.saveConfiguration = () => {
 // Array of rides to be accepted by a driver
 const pendingRides = [];
 // Array of vehicles in use
-const drivers = getDefaultVehicles();
+const drivers = vehicles.getDefaultVehicles();
 
 const app = new PIXI.Application(RESOLUTION_X, RESOLUTION_Y, { backgroundColor: 0xbbbcbf });
 document.body.appendChild(app.view);
@@ -37,7 +38,8 @@ function calcRectSize(canvasWidthOrHeight, columnOrRowCount, roadSize) {
 }
 
 
-function drawVerticalLines(x, y, rectWidth, rectHeight, roadWidth, lineWidth, lineLength, missingLineLength) {
+function drawVerticalLines(x, y, rectWidth, rectHeight, roadWidth,
+  lineWidth, lineLength, missingLineLength) {
   const xLine = x + rectWidth + roadWidth / 2 - lineWidth / 2;
   const linesCount = Math.floor(rectHeight / (lineLength + missingLineLength));
   const linesLength = linesCount * lineLength + (linesCount - 1) * missingLineLength;
@@ -55,7 +57,8 @@ function drawVerticalLines(x, y, rectWidth, rectHeight, roadWidth, lineWidth, li
   }
 }
 
-function drawHorizontalLines(x, y, rectWidth, rectHeight, roadHeight, lineWidth, lineLength, missingLineLength) {
+function drawHorizontalLines(x, y, rectWidth, rectHeight, roadHeight,
+  lineWidth, lineLength, missingLineLength) {
   const yLine = y + rectHeight + roadHeight / 2 - lineWidth / 2;
   const linesCount = Math.floor(rectWidth / (lineLength + missingLineLength));
   const linesLength = linesCount * lineLength + (linesCount - 1) * missingLineLength;
@@ -63,7 +66,7 @@ function drawHorizontalLines(x, y, rectWidth, rectHeight, roadHeight, lineWidth,
 
   // drawing lines and increasing its y position
   let currentX = x + linesEdgeFromCrossing;
-  let rectangle = new PIXI.Graphics();
+  const rectangle = new PIXI.Graphics();
   for (let i = 0; i < linesCount; i++) {
     rectangle.beginFill(lineColorOnRoad);
     rectangle.drawRect(currentX, yLine, lineLength, lineWidth);
@@ -85,7 +88,7 @@ function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount) {
   const rectHeight = calcRectSize(RESOLUTION_Y, rowCount, roadSize);
 
   let y = -rectHeight / 2;
-  let rectangle = new PIXI.Graphics();
+  const rectangle = new PIXI.Graphics();
 
   // drawing rows
   for (let i = 0; i < rowCount + 1; i++) {
@@ -107,26 +110,34 @@ function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount) {
 }
 
 
+/**
+ * We start coordinates at (0,0) and end at (9,9)
+ * Coordinate 0,0 so upper-left intersection is at (50,40)
+ * Next x intersection is +100, so (150,40)
+ * Next y intersection is +75, so (50,115) or (150,115)
+ */
+
 
 window.addEventListener('load', () => {
-  document.getElementById('rows').value = localStorage.getItem('rows') || 10;
-  document.getElementById('columns').value = localStorage.getItem('columns') || 10;
+  // Set simulation field size
+  // document.getElementById('rows').value = localStorage.getItem('rows') || 10;
+  // document.getElementById('columns').value = localStorage.getItem('columns') || 10;
 
   drawRoads(ROWS, COLUMNS, MAX_ROWS, MAX_COLUMNS);
 
-  // create a new Sprite from an image path
-  const car = PIXI.Sprite.from('./car.png');
-  car.scale.x = 0.4;
-  car.scale.y = 0.4;
+  // Add cars onto the canvas
+  const carImage = PIXI.Texture.fromImage('./car.png');
 
-  // center the sprite's anchor point
-  car.anchor.set(0.5);
-
-  // move the sprite to the center of the screen
-  car.x = app.screen.width / 2;
-  car.y = app.screen.height / 2;
-
-  app.stage.addChild(car);
+  for (let i = 0, len = drivers.length; i < len; i++) {
+    const car = new PIXI.Sprite(carImage);
+    car.scale.x = 0.4;
+    car.scale.y = 0.4;
+    car.anchor.set(0.5); // Center sprite's anchor point
+    car.x = xCoordToPixel(drivers[i].x);
+    car.y = yCoordToPixel(drivers[i].y);
+    app.stage.addChild(car);
+    drivers[i].car = car;
+  }
 
   rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
   rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 1);
@@ -137,9 +148,12 @@ window.addEventListener('load', () => {
 
   // Listen for animate update
   app.ticker.add(() => {
+    for (let i = 0, len = drivers.length; i < len; i++) {
+      vehicles.moveX(drivers[i], xCoordToPixel(9));
+    }
     // rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
     // console.log(pendingRides);
     // updater.updatePendingRides(pendingRides);
-    // updater.updateVehicles(drivers);
+    updater.updateVehicles(drivers);
   });
 });
