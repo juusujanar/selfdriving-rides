@@ -5,8 +5,22 @@ const aTh = document.createElement('th');
 const aTd = document.createElement('td');
 const aH3 = document.createElement('h3');
 
-const rideHeaders = { x: 'xPos', y: 'yPos', earliestStart: 'Earliest start', latestFinish: 'Latest finish' };
-const vehicleHeaders = { id: 'ID', name: 'Name', x: 'xPos', y: 'yPos' };
+const rideHeaders = {
+  id: 'ID',
+  x: 'xPos',
+  y: 'yPos',
+  earliestStart: 'Earliest start',
+  latestFinish: 'Latest finish',
+  status: 'Status',
+};
+const vehicleHeaders = {
+  id: 'ID',
+  name: 'Name',
+  x: 'xPos',
+  y: 'yPos',
+  status: 'Status',
+  destination: 'Destination',
+};
 
 function addAllColumnHeaders(obj, table) {
   const tr = aTr.cloneNode(false);

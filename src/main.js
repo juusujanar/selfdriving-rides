@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+
 import * as updater from './updateFrontend';
 import * as rides from './rides';
 import * as vehicles from './vehicles';
@@ -125,13 +126,18 @@ window.addEventListener('load', () => {
 
   drawRoads(ROWS, COLUMNS, MAX_ROWS, MAX_COLUMNS);
 
+  // Generate three random ride requests
+  for (let i = 0; i < 4; i++) {
+    pendingRides.push(rides.generateRideRequest(ROWS - 1, COLUMNS - 1, 0));
+  }
+
   // Add cars onto the canvas
   const carImage = PIXI.Texture.fromImage('./car.png');
 
   for (let i = 0, len = drivers.length; i < len; i++) {
     const car = new PIXI.Sprite(carImage);
-    car.scale.x = 0.4;
-    car.scale.y = 0.4;
+    car.scale.x = 0.3;
+    car.scale.y = 0.3;
     car.anchor.set(0.5); // Center sprite's anchor point
     car.x = xCoordToPixel(drivers[i].x);
     car.y = yCoordToPixel(drivers[i].y);
@@ -139,21 +145,22 @@ window.addEventListener('load', () => {
     drivers[i].car = car;
   }
 
-  rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
-  rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 1);
-  rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
-
   updater.updatePendingRides(pendingRides);
   updater.updateVehicles(drivers);
 
-  // Listen for animate update
+  // Ticket default speed is 1 which equals to approximately 60 FPS
   app.ticker.add(() => {
     for (let i = 0, len = drivers.length; i < len; i++) {
       vehicles.moveX(drivers[i], xCoordToPixel(9));
     }
+
     // rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
     // console.log(pendingRides);
-    // updater.updatePendingRides(pendingRides);
+    updater.updatePendingRides(pendingRides);
     updater.updateVehicles(drivers);
+
+    // Testing vehicle turning
+    // Currently rotating infinitely
+    vehicles.turnLeft(drivers[3]);
   });
 });

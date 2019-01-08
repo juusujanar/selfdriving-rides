@@ -17,10 +17,10 @@ export function getRandomInt(min, max) {
  * Next y intersection is +75, so (50,115) or (150,115)
  */
 
-const xStart = 55;
-const xStep = 100;
+const xStart = 45;
+const xStep = 102.2;
 const yStart = 52;
-const yStep = 75;
+const yStep = 76.8;
 
 export function xCoordToPixel(coord) {
   if (coord < 0 || coord > 9) {
