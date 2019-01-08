@@ -2,5 +2,10 @@
     "extends": "airbnb-base",
     "env": {
         "browser": true
+    },
+    "rules": {
+        "import/prefer-default-export": "off",
+        "import/no-default-export": "on",
+        "no-plusplus": "off"
     }
 }

@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import * as updater from './updateFrontend';
 import * as rides from './rides';
+import { getDefaultVehicles } from './vehicles';
 
 // General configuration of the field sizes
 const ROWS = localStorage.getItem('rows') || 10;
@@ -10,7 +11,7 @@ const MAX_COLUMNS = localStorage.getItem('max_columns') || 10;
 const RESOLUTION_X = 1024;
 const RESOLUTION_Y = 768;
 
-//Color configurations
+// Color configurations
 const rectangleColor = 0xc0e8da;
 const roadColor = 0x8c9191;
 const lineColorOnRoad = 0xffffff;
@@ -25,7 +26,7 @@ window.saveConfiguration = () => {
 // Array of rides to be accepted by a driver
 const pendingRides = [];
 // Array of vehicles in use
-const vehicles = [];
+const drivers = getDefaultVehicles();
 
 const app = new PIXI.Application(RESOLUTION_X, RESOLUTION_Y, { backgroundColor: 0xbbbcbf });
 document.body.appendChild(app.view);
@@ -36,15 +37,15 @@ function calcRectSize(canvasWidthOrHeight, columnOrRowCount, roadSize) {
 }
 
 
-function drawVerticalLines(x, y, rectWidth, rectHeight,  roadWidth, lineWidth, lineLength, missingLineLength) {
+function drawVerticalLines(x, y, rectWidth, rectHeight, roadWidth, lineWidth, lineLength, missingLineLength) {
   const xLine = x + rectWidth + roadWidth / 2 - lineWidth / 2;
   const linesCount = Math.floor(rectHeight / (lineLength + missingLineLength));
   const linesLength = linesCount * lineLength + (linesCount - 1) * missingLineLength;
   const linesEdgeFromCrossing = (rectHeight - linesLength) / 2;
 
-  //drawing lines and increasing its y position
+  // drawing lines and increasing its y position
   let currentY = y + linesEdgeFromCrossing;
-  let rectangle = new PIXI.Graphics();
+  const rectangle = new PIXI.Graphics();
   for (let i = 0; i < linesCount; i++) {
     rectangle.beginFill(lineColorOnRoad);
     rectangle.drawRect(xLine, currentY, lineWidth, lineLength);
@@ -60,7 +61,7 @@ function drawHorizontalLines(x, y, rectWidth, rectHeight, roadHeight, lineWidth,
   const linesLength = linesCount * lineLength + (linesCount - 1) * missingLineLength;
   const linesEdgeFromCrossing = (rectWidth - linesLength) / 2;
 
-  //drawing lines and increasing its y position
+  // drawing lines and increasing its y position
   let currentX = x + linesEdgeFromCrossing;
   let rectangle = new PIXI.Graphics();
   for (let i = 0; i < linesCount; i++) {
@@ -73,7 +74,7 @@ function drawHorizontalLines(x, y, rectWidth, rectHeight, roadHeight, lineWidth,
 }
 
 
-function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount){
+function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount) {
   // if you want to play with road/rectangle sizes then just adjust roadWidth and roadHeight
   const roadWidth = 60 + 5 * (maxColumnCount - columnCount - 1);
   const roadHeight = 60 + 5 * (maxRowCount - rowCount - 1);
@@ -86,7 +87,7 @@ function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount){
   let y = -rectHeight / 2;
   let rectangle = new PIXI.Graphics();
 
-  //drawing rows
+  // drawing rows
   for (let i = 0; i < rowCount + 1; i++) {
     let x = -rectWidth / 2;
     // drawing columns
@@ -98,8 +99,8 @@ function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount){
       // drawing road lines between two rectangles. (it prolly is faster outside of loop)
       drawVerticalLines(x, y, rectWidth, rectHeight, roadSize, 2, 10, 10);
       drawHorizontalLines(x, y, rectWidth, rectHeight, roadSize, 2, 10, 10);
-      //changing x ready for another rectangle
-      x = x + roadSize + rectWidth
+      // changing x ready for another rectangle
+      x = x + roadSize + rectWidth;
     }
     y = y + roadSize + rectHeight;
   }
@@ -136,6 +137,6 @@ window.addEventListener('load', () => {
     // rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
     // console.log(pendingRides);
     updater.updatePendingRides(pendingRides);
-    updater.updateVehicles(vehicles);
+    updater.updateVehicles(drivers);
   });
 });

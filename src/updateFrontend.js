@@ -6,7 +6,7 @@ const aTd = document.createElement('td');
 
 function addAllColumnHeaders(arr, table) {
   const tr = aTr.cloneNode(false);
-  for (let i = 0, l = arr.length; i < l; i += 1) {
+  for (let i = 0, l = arr.length; i < l; i++) {
     const th = aTh.cloneNode(false);
     th.appendChild(document.createTextNode(arr[i]));
     tr.appendChild(th);
@@ -17,9 +17,9 @@ function addAllColumnHeaders(arr, table) {
 function buildHtmlTable(arr, headers) {
   const table = aTable.cloneNode(false);
   addAllColumnHeaders(headers, table);
-  for (let i = 0, maxi = arr.length; i < maxi; i += 1) {
+  for (let i = 0, maxi = arr.length; i < maxi; i++) {
     const tr = aTr.cloneNode(false);
-    for (let j = 0, maxj = headers.length; j < maxj; j += 1) {
+    for (let j = 0, maxj = headers.length; j < maxj; j++) {
       const td = aTd.cloneNode(false);
       td.appendChild(document.createTextNode(arr[i][headers[j]] || ''));
       tr.appendChild(td);
