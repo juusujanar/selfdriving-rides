@@ -2,21 +2,61 @@ html {
   font-family: 'Roboto', sans-serif;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-}
-
 table {
-  border: 1px solid black;
-  float: left;
+  text-align: center;
+  border-collapse: collapse;
+  border-spacing: 0;
+  max-height: 150px;
+  overflow-y: scroll;
 }
 
 th {
-  text-align: left;
+  background-color: #6c7ae0;
+  color: #fff;
+  line-height: 1.5;
+  font-size: 18px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+th:first-child {
+  border-radius: 6px 0 0 0;
+}
+
+th:last-child {
+  border-radius: 0 6px 0 0;
+}
+
+th:only-child {
+  border-radius: 6px 6px 0 0;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f6ff;
+}
+
+tr {
+  border-color: inherit;
+  font-size: 16px;
+}
+
+.column {
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .information {
-  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
   flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.info-column {
+  margin-right: 50px;
+  margin-bottom: 5px;
 }

@@ -3,14 +3,19 @@ const aTable = document.createElement('table');
 const aTr = document.createElement('tr');
 const aTh = document.createElement('th');
 const aTd = document.createElement('td');
+const aH3 = document.createElement('h3');
 
-function addAllColumnHeaders(arr, table) {
+const rideHeaders = { x: 'xPos', y: 'yPos', earliestStart: 'Earliest start', latestFinish: 'Latest finish' };
+const vehicleHeaders = { id: 'ID', name: 'Name', x: 'xPos', y: 'yPos' };
+
+function addAllColumnHeaders(obj, table) {
   const tr = aTr.cloneNode(false);
-  for (let i = 0, l = arr.length; i < l; i++) {
+  Object.keys(obj).forEach((key) => {
     const th = aTh.cloneNode(false);
-    th.appendChild(document.createTextNode(arr[i]));
+    th.classList.add('column');
+    th.appendChild(document.createTextNode(obj[key]));
     tr.appendChild(th);
-  }
+  });
   table.appendChild(tr);
 }
 
@@ -19,36 +24,53 @@ function buildHtmlTable(arr, headers) {
   addAllColumnHeaders(headers, table);
   for (let i = 0, maxi = arr.length; i < maxi; i++) {
     const tr = aTr.cloneNode(false);
-    for (let j = 0, maxj = headers.length; j < maxj; j++) {
+    Object.keys(headers).forEach((key) => {
       const td = aTd.cloneNode(false);
-      td.appendChild(document.createTextNode(arr[i][headers[j]] || ''));
+      td.classList.add('column');
+      td.appendChild(document.createTextNode(arr[i][key]));
       tr.appendChild(td);
-    }
+    });
     table.appendChild(tr);
   }
   return table;
 }
 
 export function updatePendingRides(data) {
+  // Clear out old tables
   const element = document.getElementById('rides');
   while (element && element.firstChild) {
     element.removeChild(element.firstChild);
   }
+
+  // Add table header
+  const h3 = aH3.cloneNode(false);
+  h3.innerHTML = 'Pending rides';
+  element.appendChild(h3);
+
+  // Set the message or the table with data
   if (data.length === 0) {
     element.appendChild(document.createTextNode('No rides requested.'));
   } else {
-    element.appendChild(buildHtmlTable(data, ['x', 'y', 'earliestStart', 'latestFinish']));
+    element.appendChild(buildHtmlTable(data, rideHeaders));
   }
 }
 
 export function updateVehicles(data) {
+  // Clear out old tables
   const element = document.getElementById('vehicles');
   while (element && element.firstChild) {
     element.removeChild(element.firstChild);
   }
+
+  // Add table header
+  const h3 = aH3.cloneNode(false);
+  h3.innerHTML = 'Vehicles';
+  element.appendChild(h3);
+
+  // Set the message or the table with data
   if (data.length === 0) {
     element.appendChild(document.createTextNode('No vehicles available.'));
   } else {
-    element.appendChild(buildHtmlTable(data, ['x', 'y', 'Earliest Start', 'Latest Finish']));
+    element.appendChild(buildHtmlTable(data, vehicleHeaders));
   }
 }

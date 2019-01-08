@@ -132,11 +132,14 @@ window.addEventListener('load', () => {
   rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 1);
   rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
 
+  updater.updatePendingRides(pendingRides);
+  updater.updateVehicles(drivers);
+
   // Listen for animate update
   app.ticker.add(() => {
     // rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
     // console.log(pendingRides);
-    updater.updatePendingRides(pendingRides);
-    updater.updateVehicles(drivers);
+    // updater.updatePendingRides(pendingRides);
+    // updater.updateVehicles(drivers);
   });
 });
