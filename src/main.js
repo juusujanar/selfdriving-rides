@@ -18,20 +18,27 @@ const rectangleColor = 0xc0e8da;
 const roadColor = 0x8c9191;
 const lineColorOnRoad = 0xffffff;
 
+// Array of rides to be accepted by a driver
+const pendingRides = [];
+// Array of vehicles in use
+const drivers = vehicles.getDefaultVehicles();
+
+const app = new PIXI.Application(RESOLUTION_X, RESOLUTION_Y, { backgroundColor: roadColor });
+document.body.appendChild(app.view);
+
+
 window.saveConfiguration = () => {
   localStorage.setItem('rows', document.getElementById('rows').value);
   localStorage.setItem('columns', document.getElementById('columns').value);
   window.location.reload();
 };
 
+window.addRide = () => {
+  if (pendingRides.length < 10) {
+    pendingRides.push(rides.generateRideRequest(ROWS - 1, COLUMNS - 1, 0));
+  }
+};
 
-// Array of rides to be accepted by a driver
-const pendingRides = [];
-// Array of vehicles in use
-const drivers = vehicles.getDefaultVehicles();
-
-const app = new PIXI.Application(RESOLUTION_X, RESOLUTION_Y, { backgroundColor: 0xbbbcbf });
-document.body.appendChild(app.view);
 
 function calcRectSize(canvasWidthOrHeight, columnOrRowCount, roadSize) {
   const unused = canvasWidthOrHeight - columnOrRowCount * roadSize;
