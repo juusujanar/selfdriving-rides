@@ -29,8 +29,9 @@ const defaultVehicles = [
 
 const SPEED = 2;
 
-export function getDefaultVehicles() {
-  return defaultVehicles;
+export function getDefaultVehicles(n) {
+  //return defaultVehicles;
+  return defaultVehicles.slice(0, n);
 }
 
 const minX = xCoordToPixel(0) - 5;

@@ -13,15 +13,19 @@ const MAX_COLUMNS = localStorage.getItem('max_columns') || 10;
 const RESOLUTION_X = 1024;
 const RESOLUTION_Y = 768;
 
+// rides configuration
+const CAR_COUNT = 1;
+const RIDE_COUNT = 5;
+
 // Color configurations
 const rectangleColor = 0xc0e8da;
 const roadColor = 0x8c9191;
 const lineColorOnRoad = 0xffffff;
 
 // Array of rides to be accepted by a driver
-const pendingRides = [];
+const pendingRides = rides.getDefaultRides(RIDE_COUNT);
 // Array of vehicles in use
-const drivers = vehicles.getDefaultVehicles();
+const drivers = vehicles.getDefaultVehicles(CAR_COUNT);
 
 const app = new PIXI.Application(RESOLUTION_X, RESOLUTION_Y, { backgroundColor: roadColor });
 document.body.appendChild(app.view);
@@ -134,9 +138,6 @@ window.addEventListener('load', () => {
   drawRoads(ROWS, COLUMNS, MAX_ROWS, MAX_COLUMNS);
 
   // Generate three random ride requests
-  for (let i = 0; i < 4; i++) {
-    pendingRides.push(rides.generateRideRequest(ROWS - 1, COLUMNS - 1, 0));
-  }
 
   // Add cars onto the canvas
   const carImage = PIXI.Texture.fromImage('./car.png');
@@ -168,6 +169,6 @@ window.addEventListener('load', () => {
 
     // Testing vehicle turning
     // Currently rotating infinitely
-    vehicles.turnLeft(drivers[3]);
+    //vehicles.turnLeft(drivers[3]);
   });
 });
