@@ -4,7 +4,7 @@ let currentId = -1;
 
 const defaultRides = [
   { id: 0, xStart: 2, yStart: 0, xEnd: 4, yEnd: 0, earliestStart: 3, latestFinish: 5, status: 'Waiting' },
-  { id: 2, xStart: 0, yStart: 2, xEnd: 0, yEnd: 4, earliestStart: 6, latestFinish: 10, status: 'Waiting' },
+  { id: 1, xStart: 0, yStart: 2, xEnd: 0, yEnd: 4, earliestStart: 6, latestFinish: 10, status: 'Waiting' },
   { id: 2, xStart: 2, yStart: 5, xEnd: 3, yEnd: 7, earliestStart: 7, latestFinish: 15, status: 'Waiting' },
   { id: 3, xStart: 2, yStart: 2, xEnd: 0, yEnd: 0, earliestStart: 9, latestFinish: 15, status: 'Waiting' },
   { id: 4, xStart: 5, yStart: 1, xEnd: 2, yEnd: 4, earliestStart: 11, latestFinish: 16, status: 'Waiting' },

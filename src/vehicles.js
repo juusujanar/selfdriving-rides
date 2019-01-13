@@ -6,10 +6,10 @@ import {
 } from './util';
 
 const defaultVehicles = [
-  { id: 0, name: 'Tom', x: 0, y: 0, status: 'Waiting', destination: '',  },
-  { id: 1, name: 'Mark', x: 0, y: 1, status: 'Waiting', destination: '' },
-  { id: 2, name: 'Kim', x: 1, y: 0, status: 'Waiting', destination: '' },
-  { id: 3, name: 'Megan', x: 2, y: 0, status: 'Waiting', destination: '' },
+  { id: 0, name: 'Tom', x: 0, y: 0, status: 'Waiting', destination: '', client: '' },
+  { id: 1, name: 'Mark', x: 0, y: 1, status: 'Waiting', destination: '', client: '' },
+  { id: 2, name: 'Kim', x: 1, y: 0, status: 'Waiting', destination: '', client: '' },
+  { id: 3, name: 'Megan', x: 2, y: 0, status: 'Waiting', destination: '', client: '' },
   // { id: 4, name: 'Megan', x: 3, y: 0, status: 'Waiting', destination: '' },
   // { id: 5, name: 'Megan', x: 4, y: 0, status: 'Waiting', destination: '' },
   // { id: 6, name: 'Megan', x: 5, y: 0, status: 'Waiting', destination: '' },
@@ -115,9 +115,24 @@ function destinationReached(car) {
 function assignDestination(car, rides) {
   for (let i = 0; i < rides.length; i++) {
     let ride = rides[i];
+
+    // if someone is in the car, then brings client to it's destination
+    if (ride.status === car.name + " approaching") {
+      ride.status = "In " + car.name + "'s car";
+      car.destination = [ride.xEnd, ride.yEnd];
+      return;
+    }
+
+    // Client brought to it's destination
+    if (ride.status === "In " + car.name + "'s car") {
+      ride.status = "Finished";
+    }
+
+    // going to first waiting client
     if (ride.status === "Waiting") {
-      ride.status = "Car approaching";
-      car.destination = [ride.x, ride.y];
+      ride.status = car.name + " approaching";
+      car.destination = [ride.xStart, ride.yStart];
+      car.client = ride.id;
       return;
     }
   }

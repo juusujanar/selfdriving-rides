@@ -22,6 +22,7 @@ const vehicleHeaders = {
   y: 'yPos',
   status: 'Status',
   destination: 'Destination',
+  client: "Client"
 };
 
 function addAllColumnHeaders(obj, table) {
