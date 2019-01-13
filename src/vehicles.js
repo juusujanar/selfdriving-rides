@@ -45,13 +45,20 @@ export function move(vehicle, rides) {
     assignDestination(vehicle, rides);
   }
   if (!destinationReached(vehicle)) {
-    moveX(vehicle, xCoordToPixel(vehicle.destination[0]));
-    //moveY(car);
+    changeCarLocation(vehicle);
   }
-
 }
 
-export function moveX(vehicle, target) {
+function changeCarLocation(vehicle) {
+  //goes to the x endpoint first
+  if (vehicle.destination[0] !== vehicle.x) {
+    moveX(vehicle, xCoordToPixel(vehicle.destination[0]));
+  } else {
+    moveY(vehicle, yCoordToPixel(vehicle.destination[1]));
+  }
+}
+
+function moveX(vehicle, target) {
   const { car } = vehicle;
   vehicle.status = 'Moving';
 
@@ -68,7 +75,7 @@ export function moveX(vehicle, target) {
 
     // Moving towards the left-side of the map
     } else if (car.x > target) { // Check to make sure we did not pass the target
-      if (car.x + SPEED < target) { // If target is further than 1 step, take 1 step
+      if (car.x - SPEED > target) { // If target is further than 1 step, take 1 step
         car.x -= SPEED;
       } else {
         car.x = target; // Otherwise move to the target exactly
@@ -80,17 +87,26 @@ export function moveX(vehicle, target) {
   }
 }
 
-export function moveY(vehicle, target) {
+function moveY(vehicle, target) {
   const { car } = vehicle;
   vehicle.status = 'Moving';
 
   if (car.y > minY && car.y < maxY) {
     if (car.y < target) {
-      car.y += SPEED;
+      if (car.y + SPEED < target) {
+        car.y += SPEED;
+      } else {
+        car.y = target;
+      }
       vehicle.y = Math.round(yPixelToCoord(car.y) * 100) / 100;
-    } else if (car.y > target) {
-      car.y -= SPEED;
-      vehicle.y = Math.round(yPixelToCoord(car.y) * 100) / 100;
+
+    } else if (car.y > target) { // Check to make sure we did not pass the target
+      if (car.y - SPEED > target) { // If target is further than 1 step, take 1 step
+        car.y -= SPEED;
+      } else {
+        car.y = target; // Otherwise move to the target exactly
+      }
+      vehicle.y = Math.round(xPixelToCoord(car.x) * 100) / 100;
     }
   } else {
     console.error('Car went out of bounds on Y coord');
@@ -113,6 +129,9 @@ function destinationReached(car) {
 }
 
 function assignDestination(car, rides) {
+  console.log("assigning dest");
+  console.log(car.x, car.y);
+  console.log(car.destination[0], car.destination[1]);
   for (let i = 0; i < rides.length; i++) {
     let ride = rides[i];
 
