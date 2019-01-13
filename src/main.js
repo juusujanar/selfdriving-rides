@@ -166,13 +166,15 @@ window.addEventListener('load', () => {
   // Ticket default speed is 1 which equals to approximately 60 FPS
   app.ticker.add(() => {
     for (let i = 0, len = drivers.length; i < len; i++) {
-      vehicles.moveX(drivers[i], xCoordToPixel(9));
+      //vehicles.moveX(drivers[i], xCoordToPixel(9));
+      vehicles.move(drivers[i], pendingRides)
     }
 
     // rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
     // console.log(pendingRides);
     updater.updatePendingRides(pendingRides);
     updater.updateVehicles(drivers);
+    //console.log(drivers)
 
     // Testing vehicle turning
     // Currently rotating infinitely

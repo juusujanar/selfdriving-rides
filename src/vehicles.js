@@ -40,6 +40,17 @@ const maxY = yCoordToPixel(9) + 30;
 
 console.log(`Minimum borders are X ${minX} and Y ${minY}, maximum X ${maxX} and Y ${maxY}`);
 
+export function move(vehicle, rides) {
+  if (vehicle.destination === '' || destinationReached(vehicle)) {
+    assignDestination(vehicle, rides);
+  }
+  if (!destinationReached(vehicle)) {
+    moveX(vehicle, xCoordToPixel(vehicle.destination[0]));
+    //moveY(car);
+  }
+
+}
+
 export function moveX(vehicle, target) {
   const { car } = vehicle;
   vehicle.status = 'Moving';
@@ -95,4 +106,19 @@ export function turnRight(vehicle) {
 export function turnLeft(vehicle) {
   vehicle.status = 'Turning';
   vehicle.car.rotation -= 1.5708 * 0.1;
+}
+
+function destinationReached(car) {
+  return car.destination[0] === car.x && car.destination[1] === car.y;
+}
+
+function assignDestination(car, rides) {
+  for (let i = 0; i < rides.length; i++) {
+    let ride = rides[i];
+    if (ride.status === "Waiting") {
+      ride.status = "Car approaching";
+      car.destination = [ride.x, ride.y];
+      return;
+    }
+  }
 }
