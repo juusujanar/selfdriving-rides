@@ -6,7 +6,7 @@ import {
 } from './util';
 
 const defaultVehicles = [
-  { id: 0, name: 'Tom', x: 0, y: 0, status: 'Waiting', destination: '' },
+  { id: 0, name: 'Tom', x: 0, y: 0, status: 'Waiting', destination: '',  },
   { id: 1, name: 'Mark', x: 0, y: 1, status: 'Waiting', destination: '' },
   { id: 2, name: 'Kim', x: 1, y: 0, status: 'Waiting', destination: '' },
   { id: 3, name: 'Megan', x: 2, y: 0, status: 'Waiting', destination: '' },

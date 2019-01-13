@@ -157,8 +157,8 @@ window.addEventListener('load', () => {
   for (let i = 0, len = pendingRides.length; i < len; i++) {
     const marker = new PIXI.Sprite(markerImage);
     marker.anchor.set(0.75); // Center sprite's anchor point
-    marker.x = xCoordToPixel(pendingRides[i].x);
-    marker.y = yCoordToPixel(pendingRides[i].y);
+    marker.x = xCoordToPixel(pendingRides[i].xStart);
+    marker.y = yCoordToPixel(pendingRides[i].yStart);
     app.stage.addChild(marker);
     pendingRides[i].marker = marker;
   }
