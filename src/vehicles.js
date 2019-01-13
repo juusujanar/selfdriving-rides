@@ -49,6 +49,7 @@ export function move(vehicle, rides) {
   }
 }
 
+//todo simple solution. If time make it more fancy (random time turns)
 function changeCarLocation(vehicle) {
   //goes to the x endpoint first
   if (vehicle.destination[0] !== vehicle.x) {
@@ -92,21 +93,25 @@ function moveY(vehicle, target) {
   vehicle.status = 'Moving';
 
   if (car.y > minY && car.y < maxY) {
-    if (car.y < target) {
+    if (car.y < target) {    // moving down
       if (car.y + SPEED < target) {
         car.y += SPEED;
       } else {
         car.y = target;
       }
       vehicle.y = Math.round(yPixelToCoord(car.y) * 100) / 100;
-
+      if (vehicle.y === 2) {
+      }
+    // moving up
     } else if (car.y > target) { // Check to make sure we did not pass the target
       if (car.y - SPEED > target) { // If target is further than 1 step, take 1 step
         car.y -= SPEED;
       } else {
         car.y = target; // Otherwise move to the target exactly
       }
-      vehicle.y = Math.round(xPixelToCoord(car.x) * 100) / 100;
+      vehicle.y = Math.round(yPixelToCoord(car.y) * 100) / 100;
+      if (vehicle.y === 2) {
+      }
     }
   } else {
     console.error('Car went out of bounds on Y coord');
@@ -128,10 +133,7 @@ function destinationReached(car) {
   return car.destination[0] === car.x && car.destination[1] === car.y;
 }
 
-function assignDestination(car, rides) {
-  console.log("assigning dest");
-  console.log(car.x, car.y);
-  console.log(car.destination[0], car.destination[1]);
+  function assignDestination(car, rides) {
   for (let i = 0; i < rides.length; i++) {
     let ride = rides[i];
 
