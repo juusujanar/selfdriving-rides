@@ -7,8 +7,10 @@ const aH3 = document.createElement('h3');
 
 const rideHeaders = {
   id: 'ID',
-  x: 'xPos',
-  y: 'yPos',
+  xStart: 'Start x',
+  yStart: 'Start y',
+  xEnd: 'End x',
+  yEnd: 'End y',
   earliestStart: 'Earliest start',
   latestFinish: 'Latest finish',
   status: 'Status',

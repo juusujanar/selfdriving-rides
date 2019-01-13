@@ -3,13 +3,13 @@ import { getRandomInt } from './util';
 let currentId = -1;
 
 const defaultRides = [
-  { id: 0, x: 2, y: 0, earliestStart: 3, latestFinish: 5, status: 'Waiting' },
-  { id: 2, x: 0, y: 2, earliestStart: 6, latestFinish: 10, status: 'Waiting' },
-  { id: 2, x: 2, y: 5, earliestStart: 7, latestFinish: 15, status: 'Waiting' },
-  { id: 3, x: 2, y: 2, earliestStart: 9, latestFinish: 15, status: 'Waiting' },
-  { id: 4, x: 5, y: 1, earliestStart: 11, latestFinish: 16, status: 'Waiting' },
-  { id: 5, x: 1, y: 0, earliestStart: 13, latestFinish: 18, status: 'Waiting' },
-  { id: 6, x: 4, y: 2, earliestStart: 17, latestFinish: 28, status: 'Waiting' },
+  { id: 0, xStart: 2, yStart: 0, xEnd: 4, yEnd: 0, earliestStart: 3, latestFinish: 5, status: 'Waiting' },
+  { id: 2, xStart: 0, yStart: 2, xEnd: 0, yEnd: 4, earliestStart: 6, latestFinish: 10, status: 'Waiting' },
+  { id: 2, xStart: 2, yStart: 5, xEnd: 3, yEnd: 7, earliestStart: 7, latestFinish: 15, status: 'Waiting' },
+  { id: 3, xStart: 2, yStart: 2, xEnd: 0, yEnd: 0, earliestStart: 9, latestFinish: 15, status: 'Waiting' },
+  { id: 4, xStart: 5, yStart: 1, xEnd: 2, yEnd: 4, earliestStart: 11, latestFinish: 16, status: 'Waiting' },
+  { id: 5, xStart: 1, yStart: 0, xEnd: 1, yEnd: 1, earliestStart: 13, latestFinish: 18, status: 'Waiting' },
+  { id: 6, xStart: 4, yStart: 2, xEnd: 2, yEnd: 5, earliestStart: 17, latestFinish: 28, status: 'Waiting' },
 ];
 
 
