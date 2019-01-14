@@ -17,7 +17,7 @@ export function getRandomInt(min, max) {
  * Next y intersection is +75, so (50,115) or (150,115)
  */
 
-const xStart = 45;
+const xStart = 40;
 const xStep = 102.2;
 const yStart = 52;
 const yStep = 76.8;

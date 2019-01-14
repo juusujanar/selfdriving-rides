@@ -39,10 +39,6 @@ export function generateRideRequest(rows, columns, currentTime) {
 }
 
 export function getDefaultRides(n) {
+  currentId = n - 1;
   return defaultRides.slice(0, n);
-}
-
-export function assignRide(id) {
-  // TODO: Remove marker from image
-  return undefined;
 }

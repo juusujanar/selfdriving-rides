@@ -37,9 +37,32 @@ window.saveConfiguration = () => {
   window.location.reload();
 };
 
+
+function addRideMarkers(ride) {
+  const startMarker = PIXI.Texture.fromImage('./red-marker.png');
+  const endMarker = PIXI.Texture.fromImage('./green-marker.png');
+
+  const start = new PIXI.Sprite(startMarker);
+  start.anchor.set(0.5, 0.9); // Center sprite's anchor point
+  start.x = xCoordToPixel(ride.xStart);
+  start.y = yCoordToPixel(ride.yStart);
+  app.stage.addChild(start);
+  ride.startMarker = start;
+
+  const end = new PIXI.Sprite(endMarker);
+  end.anchor.set(0.5, 0.9); // Center sprite's anchor point
+  end.x = xCoordToPixel(ride.xEnd);
+  end.y = yCoordToPixel(ride.yEnd);
+  app.stage.addChild(end);
+  ride.endMarker = end;
+}
+
+
 window.addRide = () => {
   if (pendingRides.length < 10) {
-    pendingRides.push(rides.generateRideRequest(ROWS - 1, COLUMNS - 1, 0));
+    const ride = rides.generateRideRequest(ROWS - 1, COLUMNS - 1, 0);
+    pendingRides.push(ride);
+    addRideMarkers(ride);
   }
 };
 
@@ -141,7 +164,6 @@ window.addEventListener('load', () => {
 
   // Add cars onto the canvas
   const carImage = PIXI.Texture.fromImage('./car.png');
-  const startMarker = PIXI.Texture.fromImage('./red-marker.png');
 
   for (let i = 0, len = drivers.length; i < len; i++) {
     const car = new PIXI.Sprite(carImage);
@@ -155,19 +177,14 @@ window.addEventListener('load', () => {
   }
 
   for (let i = 0, len = pendingRides.length; i < len; i++) {
-    const marker = new PIXI.Sprite(startMarker);
-    marker.anchor.set(0.75); // Center sprite's anchor point
-    marker.x = xCoordToPixel(pendingRides[i].xStart);
-    marker.y = yCoordToPixel(pendingRides[i].yStart);
-    app.stage.addChild(marker);
-    pendingRides[i].startMarker = marker;
+    addRideMarkers(pendingRides[i]);
   }
 
   // Ticket default speed is 1 which equals to approximately 60 FPS
   app.ticker.add(() => {
     for (let i = 0, len = drivers.length; i < len; i++) {
       // vehicles.moveX(drivers[i], xCoordToPixel(9));
-      vehicles.move(drivers[i], pendingRides)
+      vehicles.move(drivers[i], pendingRides);
     }
 
     // rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);

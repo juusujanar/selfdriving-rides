@@ -68,6 +68,7 @@ function moveX(vehicle, target) {
     // Moving towards the right-side of the map
     if (car.x < target) { // If we have not passed the target
       if (car.x + SPEED < target) { // If target is further than 1 step, take 1 step
+        car.rotation = 0;
         car.x += SPEED;
       } else { // Otherwise move to the target
         car.x = target;
@@ -77,6 +78,7 @@ function moveX(vehicle, target) {
     // Moving towards the left-side of the map
     } else if (car.x > target) { // Check to make sure we did not pass the target
       if (car.x - SPEED > target) { // If target is further than 1 step, take 1 step
+        car.rotation = 180 * (Math.PI / 180);
         car.x -= SPEED;
       } else {
         car.x = target; // Otherwise move to the target exactly
@@ -95,6 +97,7 @@ function moveY(vehicle, target) {
   if (car.y > minY && car.y < maxY) {
     if (car.y < target) {    // moving down
       if (car.y + SPEED < target) {
+        car.rotation = 90 * (Math.PI / 180);
         car.y += SPEED;
       } else {
         car.y = target;
@@ -105,6 +108,7 @@ function moveY(vehicle, target) {
     // moving up
     } else if (car.y > target) { // Check to make sure we did not pass the target
       if (car.y - SPEED > target) { // If target is further than 1 step, take 1 step
+        car.rotation = 270 * (Math.PI / 180);
         car.y -= SPEED;
       } else {
         car.y = target; // Otherwise move to the target exactly
@@ -135,11 +139,11 @@ function destinationReached(car) {
 
   function assignDestination(car, rides) {
   for (let i = 0; i < rides.length; i++) {
-    let ride = rides[i];
+    const ride = rides[i];
 
     // if someone is in the car, then brings client to it's destination
-    if (ride.status === car.name + " approaching") {
-      ride.status = "In " + car.name + "'s car";
+    if (ride.status === `${car.name} approaching`) {
+      ride.status = `In ${car.name}'s car`;
       car.destination = [ride.xEnd, ride.yEnd];
       // Remove marker on pickup
       ride.startMarker.destroy();
@@ -147,13 +151,15 @@ function destinationReached(car) {
     }
 
     // Client brought to it's destination
-    if (ride.status === "In " + car.name + "'s car") {
+    if (ride.status === `In ${car.name}'s car`) {
       ride.status = "Finished";
+      // Remove marker on finish
+      ride.endMarker.destroy();
     }
 
     // going to first waiting client
     if (ride.status === "Waiting") {
-      ride.status = car.name + " approaching";
+      ride.status = `${car.name} approaching`;
       car.destination = [ride.xStart, ride.yStart];
       car.client = ride.id;
       return;
