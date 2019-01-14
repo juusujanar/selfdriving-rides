@@ -141,6 +141,8 @@ function destinationReached(car) {
     if (ride.status === car.name + " approaching") {
       ride.status = "In " + car.name + "'s car";
       car.destination = [ride.xEnd, ride.yEnd];
+      // Remove marker on pickup
+      ride.startMarker.destroy();
       return;
     }
 

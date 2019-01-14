@@ -15,8 +15,10 @@ const defaultRides = [
 
 export function generateRideRequest(rows, columns, currentTime) {
   // Generate coordinates for the ride
-  const x = getRandomInt(0, columns);
-  const y = getRandomInt(0, rows);
+  const xStart = getRandomInt(0, columns);
+  const yStart = getRandomInt(0, rows);
+  const xEnd = getRandomInt(0, columns);
+  const yEnd = getRandomInt(0, rows);
 
   // Generate times for the rides
   const earliestStart = currentTime + 0;
@@ -26,8 +28,10 @@ export function generateRideRequest(rows, columns, currentTime) {
 
   return {
     id: currentId,
-    x,
-    y,
+    xStart,
+    yStart,
+    xEnd,
+    yEnd,
     earliestStart,
     latestFinish,
     status: 'Waiting',

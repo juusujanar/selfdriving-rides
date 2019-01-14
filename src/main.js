@@ -141,7 +141,7 @@ window.addEventListener('load', () => {
 
   // Add cars onto the canvas
   const carImage = PIXI.Texture.fromImage('./car.png');
-  const markerImage = PIXI.Texture.fromImage('./red-marker.png');
+  const startMarker = PIXI.Texture.fromImage('./red-marker.png');
 
   for (let i = 0, len = drivers.length; i < len; i++) {
     const car = new PIXI.Sprite(carImage);
@@ -155,18 +155,18 @@ window.addEventListener('load', () => {
   }
 
   for (let i = 0, len = pendingRides.length; i < len; i++) {
-    const marker = new PIXI.Sprite(markerImage);
+    const marker = new PIXI.Sprite(startMarker);
     marker.anchor.set(0.75); // Center sprite's anchor point
     marker.x = xCoordToPixel(pendingRides[i].xStart);
     marker.y = yCoordToPixel(pendingRides[i].yStart);
     app.stage.addChild(marker);
-    pendingRides[i].marker = marker;
+    pendingRides[i].startMarker = marker;
   }
 
   // Ticket default speed is 1 which equals to approximately 60 FPS
   app.ticker.add(() => {
     for (let i = 0, len = drivers.length; i < len; i++) {
-      //vehicles.moveX(drivers[i], xCoordToPixel(9));
+      // vehicles.moveX(drivers[i], xCoordToPixel(9));
       vehicles.move(drivers[i], pendingRides)
     }
 
@@ -174,7 +174,7 @@ window.addEventListener('load', () => {
     // console.log(pendingRides);
     updater.updatePendingRides(pendingRides);
     updater.updateVehicles(drivers);
-    //console.log(drivers)
+    // console.log(drivers)
 
     // Testing vehicle turning
     // Currently rotating infinitely
