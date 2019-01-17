@@ -6,10 +6,10 @@ import {
 } from './util';
 
 const defaultVehicles = [
-  { id: 0, name: 'Tom', x: 0, y: 0, status: 'Waiting', destination: '', client: '' },
-  { id: 1, name: 'Mark', x: 0, y: 1, status: 'Waiting', destination: '', client: '' },
-  { id: 2, name: 'Kim', x: 1, y: 0, status: 'Waiting', destination: '', client: '' },
-  { id: 3, name: 'Megan', x: 2, y: 0, status: 'Waiting', destination: '', client: '' },
+  { id: 0, name: 'Tom', x: 0, y: 0, status: 'Waiting', destination: '', client: '', currentRide: null, time: 0},
+  { id: 1, name: 'Mark', x: 0, y: 1, status: 'Waiting', destination: '', client: '', currentRide: null, time: 0 },
+  { id: 2, name: 'Kim', x: 1, y: 0, status: 'Waiting', destination: '', client: '', currentRide: null, time: 0 },
+  { id: 3, name: 'Megan', x: 2, y: 0, status: 'Waiting', destination: '', client: '', currentRide: null, time: 0 },
   // { id: 4, name: 'Megan', x: 3, y: 0, status: 'Waiting', destination: '' },
   // { id: 5, name: 'Megan', x: 4, y: 0, status: 'Waiting', destination: '' },
   // { id: 6, name: 'Megan', x: 5, y: 0, status: 'Waiting', destination: '' },
@@ -27,7 +27,7 @@ const defaultVehicles = [
   // { id: 18, name: 'Megan', x: 0, y: 9, status: 'Waiting', destination: '' },
 ];
 
-const SPEED = 2;
+export const SPEED = 2;
 
 export function getDefaultVehicles(n) {
   return defaultVehicles.slice(0, n);
@@ -40,26 +40,28 @@ const maxY = yCoordToPixel(9) + 30;
 
 console.log(`Minimum borders are X ${minX} and Y ${minY}, maximum X ${maxX} and Y ${maxY}`);
 
-export function move(vehicle, rides) {
-  if (vehicle.destination === '' || destinationReached(vehicle)) {
+export function move(vehicle, rides, xSpeed, ySpeed) {
+  if (vehicle.destination === '') {   // first assignments
+    assignDestination(vehicle, rides);
+  } else if (destinationReached(vehicle)) {  // && clientReady() todo client ready - boolean if client is ready for next destination
     assignDestination(vehicle, rides);
   }
   if (!destinationReached(vehicle)) {
-    changeCarLocation(vehicle);
+    changeCarLocation(vehicle, xSpeed, ySpeed);
   }
 }
 
-//todo simple solution. If time make it more fancy (random time turns)
-function changeCarLocation(vehicle) {
+//todo simple solution. If time make it more fancy (random time turns etc)
+function changeCarLocation(vehicle, xSpeed, ySpeed) {
   //goes to the x endpoint first
   if (vehicle.destination[0] !== vehicle.x) {
-    moveX(vehicle, xCoordToPixel(vehicle.destination[0]));
+    moveX(vehicle, xCoordToPixel(vehicle.destination[0]), xSpeed);
   } else {
-    moveY(vehicle, yCoordToPixel(vehicle.destination[1]));
+    moveY(vehicle, yCoordToPixel(vehicle.destination[1]), ySpeed);
   }
 }
 
-function moveX(vehicle, target) {
+function moveX(vehicle, target, speed) {
   const { car } = vehicle;
   vehicle.status = 'Moving';
 
@@ -67,9 +69,9 @@ function moveX(vehicle, target) {
   if (car.x > minX && car.x < maxX) {
     // Moving towards the right-side of the map
     if (car.x < target) { // If we have not passed the target
-      if (car.x + SPEED < target) { // If target is further than 1 step, take 1 step
+      if (car.x + speed < target) { // If target is further than 1 step, take 1 step
         car.rotation = 0;
-        car.x += SPEED;
+        car.x += speed;
       } else { // Otherwise move to the target
         car.x = target;
       }
@@ -77,9 +79,9 @@ function moveX(vehicle, target) {
 
     // Moving towards the left-side of the map
     } else if (car.x > target) { // Check to make sure we did not pass the target
-      if (car.x - SPEED > target) { // If target is further than 1 step, take 1 step
+      if (car.x - speed > target) { // If target is further than 1 step, take 1 step
         car.rotation = 180 * (Math.PI / 180);
-        car.x -= SPEED;
+        car.x -= speed;
       } else {
         car.x = target; // Otherwise move to the target exactly
       }
@@ -90,15 +92,15 @@ function moveX(vehicle, target) {
   }
 }
 
-function moveY(vehicle, target) {
+function moveY(vehicle, target, speed) {
   const { car } = vehicle;
   vehicle.status = 'Moving';
 
   if (car.y > minY && car.y < maxY) {
     if (car.y < target) {    // moving down
-      if (car.y + SPEED < target) {
+      if (car.y + speed < target) {
         car.rotation = 90 * (Math.PI / 180);
-        car.y += SPEED;
+        car.y += speed;
       } else {
         car.y = target;
       }
@@ -107,9 +109,9 @@ function moveY(vehicle, target) {
       }
     // moving up
     } else if (car.y > target) { // Check to make sure we did not pass the target
-      if (car.y - SPEED > target) { // If target is further than 1 step, take 1 step
+      if (car.y - speed > target) { // If target is further than 1 step, take 1 step
         car.rotation = 270 * (Math.PI / 180);
-        car.y -= SPEED;
+        car.y -= speed;
       } else {
         car.y = target; // Otherwise move to the target exactly
       }
@@ -137,7 +139,11 @@ function destinationReached(car) {
   return car.destination[0] === car.x && car.destination[1] === car.y;
 }
 
-  function assignDestination(car, rides) {
+function clientReady(){
+
+}
+
+function assignDestination(car, rides) {
   for (let i = 0; i < rides.length; i++) {
     const ride = rides[i];
 

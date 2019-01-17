@@ -4,6 +4,7 @@ import * as updater from './updateFrontend';
 import * as rides from './rides';
 import * as vehicles from './vehicles';
 import { xCoordToPixel, yCoordToPixel } from './util';
+import {getCarSelection} from './carSelection';
 
 // General configuration of the field sizes
 const ROWS = localStorage.getItem('rows') || 10;
@@ -12,9 +13,13 @@ const MAX_ROWS = localStorage.getItem('max_rows') || 10;
 const MAX_COLUMNS = localStorage.getItem('max_columns') || 10;
 const RESOLUTION_X = 1024;
 const RESOLUTION_Y = 768;
+let rectWidth = 0;
+let rectHeight = 0;
+let roadWidth = 0;
+let roadHeight = 0;
 
 // rides configuration
-const CAR_COUNT = 1;
+const CAR_COUNT = 2;
 const RIDE_COUNT = 5;
 
 // Color configurations
@@ -25,7 +30,15 @@ const lineColorOnRoad = 0xffffff;
 // Array of rides to be accepted by a driver
 const pendingRides = rides.getDefaultRides(RIDE_COUNT);
 // Array of vehicles in use
-const drivers = vehicles.getDefaultVehicles(CAR_COUNT);
+let drivers = vehicles.getDefaultVehicles(CAR_COUNT);
+const driversSelection = getCarSelection(pendingRides, drivers);
+
+// assign rides to drivers
+for (let i = 0; i< drivers.length; i++) {
+  let driver = drivers[i];
+  driver.rides = driversSelection[i]
+}
+console.log(drivers);
 
 const app = new PIXI.Application(RESOLUTION_X, RESOLUTION_Y, { backgroundColor: roadColor });
 document.body.appendChild(app.view);
@@ -111,16 +124,15 @@ function drawHorizontalLines(x, y, rectWidth, rectHeight, roadHeight,
   }
 }
 
-
 function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount) {
   // if you want to play with road/rectangle sizes then just adjust roadWidth and roadHeight
-  const roadWidth = 60 + 5 * (maxColumnCount - columnCount - 1);
-  const roadHeight = 60 + 5 * (maxRowCount - rowCount - 1);
+  roadWidth = 60 + 5 * (maxColumnCount - columnCount - 1);
+  roadHeight = 60 + 5 * (maxRowCount - rowCount - 1);
   // making the roadHeight and roadWidth equal to the smaller value of them
   const roadSize = Math.min(roadWidth, roadHeight);
 
-  const rectWidth = calcRectSize(RESOLUTION_X, columnCount, roadSize);
-  const rectHeight = calcRectSize(RESOLUTION_Y, rowCount, roadSize);
+  rectWidth = calcRectSize(RESOLUTION_X, columnCount, roadSize);
+  rectHeight = calcRectSize(RESOLUTION_Y, rowCount, roadSize);
 
   let y = -rectHeight / 2;
   const rectangle = new PIXI.Graphics();
@@ -152,6 +164,12 @@ function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount) {
  * Next y intersection is +75, so (50,115) or (150,115)
  */
 
+const streetPassingSpeed = 2;  // in seconds
+let time = 0;
+let timeChangeInTick = 0;
+let xSpeed;
+let ySpeed;
+
 
 window.addEventListener('load', () => {
   // Set simulation field size
@@ -159,6 +177,7 @@ window.addEventListener('load', () => {
   // document.getElementById('columns').value = localStorage.getItem('columns') || 10;
 
   drawRoads(ROWS, COLUMNS, MAX_ROWS, MAX_COLUMNS);
+  formSpeeds();
 
   // Generate three random ride requests
 
@@ -182,9 +201,11 @@ window.addEventListener('load', () => {
 
   // Ticket default speed is 1 which equals to approximately 60 FPS
   app.ticker.add(() => {
+    time += timeChangeInTick;
     for (let i = 0, len = drivers.length; i < len; i++) {
       // vehicles.moveX(drivers[i], xCoordToPixel(9));
-      vehicles.move(drivers[i], pendingRides);
+      vehicles.move(drivers[i], pendingRides, xSpeed, ySpeed);
+      drivers[i].time = time;
     }
 
     // rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
@@ -198,3 +219,12 @@ window.addEventListener('load', () => {
     // vehicles.turnLeft(drivers[3]);
   });
 });
+
+function formSpeeds() {
+  const xDistToPass = rectWidth + roadWidth;
+  const yDistToPass = rectHeight + roadHeight;
+  const tickRate = 60;
+  xSpeed = xDistToPass / tickRate / streetPassingSpeed;
+  ySpeed = yDistToPass / tickRate / streetPassingSpeed;
+  timeChangeInTick = 1 / (tickRate * streetPassingSpeed);
+}
