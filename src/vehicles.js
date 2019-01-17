@@ -45,7 +45,7 @@ export function move(vehicle, rides, xSpeed, ySpeed) {
 
   if (vehicle.destination === '') {   // first assignments
     takeNextRide(vehicle, rides);
-  } else if (destinationReached(vehicle) && clientReady()) {  // todo client ready - boolean if client is ready for next destination
+  } else if (destinationReached(vehicle) && clientReady(vehicle)) {  // todo client ready - boolean if client is ready for next destination
     assignDestination(vehicle, rides);
   }
   if (!destinationReached(vehicle)) {
@@ -141,8 +141,8 @@ function destinationReached(car) {
   return car.destination[0] === car.x && car.destination[1] === car.y;
 }
 
-function clientReady() {
-  return true;
+function clientReady(car) {
+  return car.time >= car.currentRide.earliestStart ;
 }
 
 function assignDestination(car, rides) { //serving our client and if we finish with the client we assign a new client
