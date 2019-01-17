@@ -27,7 +27,6 @@ const defaultVehicles = [
   // { id: 18, name: 'Megan', x: 0, y: 9, status: 'Waiting', destination: '' },
 ];
 
-export const SPEED = 2;
 
 export function getDefaultVehicles(n) {
   return defaultVehicles.slice(0, n);
@@ -41,9 +40,12 @@ const maxY = yCoordToPixel(9) + 30;
 console.log(`Minimum borders are X ${minX} and Y ${minY}, maximum X ${maxX} and Y ${maxY}`);
 
 export function move(vehicle, rides, xSpeed, ySpeed) {
+  if (vehicle.status === "finished")
+    return;
+
   if (vehicle.destination === '') {   // first assignments
-    assignDestination(vehicle, rides);
-  } else if (destinationReached(vehicle)) {  // && clientReady() todo client ready - boolean if client is ready for next destination
+    takeNextRide(vehicle, rides);
+  } else if (destinationReached(vehicle) && clientReady()) {  // todo client ready - boolean if client is ready for next destination
     assignDestination(vehicle, rides);
   }
   if (!destinationReached(vehicle)) {
@@ -139,36 +141,36 @@ function destinationReached(car) {
   return car.destination[0] === car.x && car.destination[1] === car.y;
 }
 
-function clientReady(){
-
+function clientReady() {
+  return true;
 }
 
-function assignDestination(car, rides) {
-  for (let i = 0; i < rides.length; i++) {
-    const ride = rides[i];
-
-    // if someone is in the car, then brings client to it's destination
-    if (ride.status === `${car.name} approaching`) {
-      ride.status = `In ${car.name}'s car`;
-      car.destination = [ride.xEnd, ride.yEnd];
-      // Remove marker on pickup
-      ride.startMarker.destroy();
-      return;
-    }
-
-    // Client brought to it's destination
-    if (ride.status === `In ${car.name}'s car`) {
-      ride.status = "Finished";
-      // Remove marker on finish
-      ride.endMarker.destroy();
-    }
-
-    // going to first waiting client
-    if (ride.status === "Waiting") {
-      ride.status = `${car.name} approaching`;
-      car.destination = [ride.xStart, ride.yStart];
-      car.client = ride.id;
-      return;
-    }
+function assignDestination(car, rides) { //serving our client and if we finish with the client we assign a new client
+  const ride = car.currentRide;
+  if (car.currentRide.xStart === car.x && car.currentRide.yStart === car.y) { // we start to move to client's destination
+    ride.status = `In ${car.name}'s car`;
+    car.destination = [ride.xEnd, ride.yEnd];
+    // Remove marker on pickup
+    ride.startMarker.destroy();
+  } else {   // client is in it's destination
+    ride.status = "Finished";
+    // Remove marker on finish
+    ride.endMarker.destroy();
+    takeNextRide(car, rides);
   }
 }
+
+
+
+function takeNextRide(car, rides) {
+  const ride = rides[car.rides.shift()];
+  if (ride == null) {   // there are no more rides that need serving
+    car.status = "finished";
+    return;
+  }
+  car.currentRide = ride;
+  ride.status = `${car.name} approaching`;
+  car.destination = [ride.xStart, ride.yStart];
+  car.client = ride.id;
+}
+
