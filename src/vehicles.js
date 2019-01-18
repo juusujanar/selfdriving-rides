@@ -22,6 +22,9 @@ const minY = yCoordToPixel(0) - 5;
 const maxX = xCoordToPixel(9) + 30;
 const maxY = yCoordToPixel(9) + 30;
 
+const RIDE_FINISHED = 5;
+const START_ON_TIME_BONUS = 10;
+
 console.log(`Minimum borders are X ${minX} and Y ${minY}, maximum X ${maxX} and Y ${maxY}`);
 
 export function move(vehicle, rides, xSpeed, ySpeed) {
@@ -91,8 +94,6 @@ function moveY(vehicle, target, speed) {
         car.y = target;
       }
       vehicle.y = Math.round(yPixelToCoord(car.y) * 100) / 100;
-      if (vehicle.y === 2) {
-      }
     // moving up
     } else if (car.y > target) { // Check to make sure we did not pass the target
       if (car.y - speed > target) { // If target is further than 1 step, take 1 step
@@ -102,8 +103,6 @@ function moveY(vehicle, target, speed) {
         car.y = target; // Otherwise move to the target exactly
       }
       vehicle.y = Math.round(yPixelToCoord(car.y) * 100) / 100;
-      if (vehicle.y === 2) {
-      }
     }
   } else {
     console.error('Car went out of bounds on Y coord');
@@ -134,10 +133,17 @@ function assignDestination(car, rides) { // serving our client and if we finish 
   if (car.currentRide.xStart === car.x && car.currentRide.yStart === car.y) { // we start to move to client's destination
     ride.status = `In ${car.name}'s car`;
     car.destination = [ride.xEnd, ride.yEnd];
+
+    if (ride.earliestStart === Math.ceil(window.time) - 1) {
+      // Give 10 points if picked up on time
+      car.score += START_ON_TIME_BONUS;
+    }
     // Remove marker on pickup
     ride.startMarker.destroy();
   } else {   // client is in it's destination
     ride.status = 'Finished';
+    // Give 5 points when finishing ride
+    car.score += RIDE_FINISHED;
     // Remove marker on finish
     ride.endMarker.destroy();
     takeNextRide(car, rides);

@@ -19,8 +19,8 @@ let roadWidth = 0;
 let roadHeight = 0;
 
 // rides configuration
-const CAR_COUNT = 2;
-const RIDE_COUNT = 5;
+const CAR_COUNT = 3;
+const RIDE_COUNT = 6;
 
 // Color configurations
 const rectangleColor = 0xc0e8da;
