@@ -1,8 +1,8 @@
 export function getCarSelection(rides, drivers) {
-    //console.log(drivers);
-    //selection key is drive id and value ride number (id)
     let selection = {};
     let ridesAssigned = 0;
+    const driversCount = drivers.length;
+    const ridesCount = rides.length;
 
     // assign one first ride for each car
     for (let i = 0; i<drivers.length; i++) {
@@ -10,15 +10,18 @@ export function getCarSelection(rides, drivers) {
         ridesAssigned++;
     }
 
-    dummySolution(selection, ridesAssigned, rides.length);
+    while (ridesAssigned < ridesCount) {
+        let nextRides = rides.slice(ridesAssigned, Math.min(ridesCount, ridesAssigned + driversCount));
+        let driver = assignDriverForNextRide(drivers, nextRides);
+        selection[driver].push(ridesAssigned);
+        ridesAssigned++;
+    }
 
     return selection;
 }
 
-function dummySolution(selection, ridesAssigned, ridesCount) {
-    const count = ridesCount - ridesAssigned;
-    for (let i = 0; i < count; i++) {
-        selection[0].push(ridesAssigned);
-        ridesAssigned++;
-    }
+function assignDriverForNextRide(drivers, nextRides) { //todo
+    return 0
 }
+
+

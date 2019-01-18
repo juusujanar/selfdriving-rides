@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js';
 import * as updater from './updateFrontend';
 import * as rides from './rides';
 import * as vehicles from './vehicles';
-import { xCoordToPixel, yCoordToPixel } from './util';
+import { xCoordToPixel, yCoordToPixel, rounded } from './util';
 import {getCarSelection} from './carSelection';
 
 // General configuration of the field sizes
@@ -38,7 +38,6 @@ for (let i = 0; i< drivers.length; i++) {
   let driver = drivers[i];
   driver.rides = driversSelection[i]
 }
-console.log(drivers);
 
 const app = new PIXI.Application(RESOLUTION_X, RESOLUTION_Y, { backgroundColor: roadColor });
 document.body.appendChild(app.view);
@@ -205,7 +204,7 @@ window.addEventListener('load', () => {
     for (let i = 0, len = drivers.length; i < len; i++) {
       // vehicles.moveX(drivers[i], xCoordToPixel(9));
       vehicles.move(drivers[i], pendingRides, xSpeed, ySpeed);
-      drivers[i].time = time;
+      drivers[i].time = rounded(time);
     }
 
     // rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
@@ -228,3 +227,4 @@ function formSpeeds() {
   ySpeed = yDistToPass / tickRate / streetPassingSpeed;
   timeChangeInTick = 1 / (tickRate * streetPassingSpeed);
 }
+

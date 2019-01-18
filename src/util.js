@@ -49,3 +49,9 @@ export function yPixelToCoord(pixel) {
   }
   return (pixel - yStart) / yStep;
 }
+
+export function rounded(time) {
+  let num = Number(time);
+  let roundedString = num.toFixed(2);
+  return Number(roundedString); // toFixed() returns a string (often suitable for printing already)
+}
