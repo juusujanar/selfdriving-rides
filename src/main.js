@@ -28,7 +28,7 @@ const roadColor = 0x8c9191;
 const lineColorOnRoad = 0xffffff;
 
 // Array of rides to be accepted by a driver
-const pendingRides = rides.getDefaultRides(RIDE_COUNT);
+let pendingRides = rides.getDefaultRides(RIDE_COUNT);
 // Array of vehicles in use
 const drivers = vehicles.getDefaultVehicles(CAR_COUNT);
 const driversSelection = getCarSelection(pendingRides, drivers);
@@ -47,6 +47,10 @@ window.saveConfiguration = () => {
   localStorage.setItem('rows', document.getElementById('rows').value);
   localStorage.setItem('columns', document.getElementById('columns').value);
   window.location.reload();
+};
+
+window.clearFinished = () => {
+  pendingRides = pendingRides.filter(ride => ride.status !== 'Finished');
 };
 
 
@@ -72,7 +76,7 @@ function addRideMarkers(ride) {
 
 window.addRide = () => {
   if (pendingRides.length < 10) {
-    const ride = rides.generateRideRequest(ROWS - 1, COLUMNS - 1, 0);
+    const ride = rides.generateRideRequest(ROWS - 1, COLUMNS - 1, window.time);
     pendingRides.push(ride);
     addRideMarkers(ride);
   }
@@ -178,10 +182,6 @@ function formSpeeds() {
   timeChangeInTick = 1 / (tickRate * streetPassingSpeed);
 }
 
-export function getTime() {
-  return time;
-}
-
 
 window.addEventListener('load', () => {
   // Set simulation field size
@@ -190,8 +190,6 @@ window.addEventListener('load', () => {
 
   drawRoads(ROWS, COLUMNS, MAX_ROWS, MAX_COLUMNS);
   formSpeeds();
-
-  // Generate three random ride requests
 
   // Add cars onto the canvas
   const carImage = PIXI.Texture.fromImage('./car.png');
@@ -214,6 +212,7 @@ window.addEventListener('load', () => {
   // Ticket default speed is 1 which equals to approximately 60 FPS
   app.ticker.add(() => {
     time += timeChangeInTick;
+    window.time = time;
     for (let i = 0, len = drivers.length; i < len; i++) {
       // vehicles.moveX(drivers[i], xCoordToPixel(9));
       vehicles.move(drivers[i], pendingRides, xSpeed, ySpeed);

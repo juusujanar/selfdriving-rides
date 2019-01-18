@@ -21,8 +21,8 @@ export function generateRideRequest(rows, columns, currentTime) {
   const yEnd = getRandomInt(0, rows);
 
   // Generate times for the rides
-  const earliestStart = currentTime + 0;
-  const latestFinish = currentTime + 0;
+  const earliestStart = Math.ceil(currentTime) + getRandomInt(0, 10);
+  const latestFinish = earliestStart + getRandomInt(3, 10);
 
   currentId++;
 

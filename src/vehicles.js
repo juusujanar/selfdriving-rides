@@ -5,8 +5,6 @@ import {
   yPixelToCoord,
 } from './util';
 
-import { getTime } from './main';
-
 const defaultVehicles = [
   { id: 0, name: 'Tom', x: 0, y: 0, status: 'Waiting', destination: '', client: '', currentRide: null, score: 0 },
   { id: 1, name: 'Mark', x: 0, y: 1, status: 'Waiting', destination: '', client: '', currentRide: null, score: 0 },
@@ -128,7 +126,7 @@ function destinationReached(car) {
 }
 
 function clientReady(car) {
-  return getTime() >= car.currentRide.earliestStart;
+  return window.time >= car.currentRide.earliestStart;
 }
 
 function assignDestination(car, rides) { // serving our client and if we finish with the client we assign a new client
