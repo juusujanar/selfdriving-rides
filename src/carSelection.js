@@ -15,7 +15,8 @@ export function getCarSelection(rides, drivers) {
   }
 
   while (ridesAssigned < ridesCount) {
-    const nextRides = rides.slice(ridesAssigned, Math.min(ridesCount, ridesAssigned + driversCount));
+    const nextRides = rides.slice(ridesAssigned, Math.min(ridesCount,
+      ridesAssigned + driversCount));
     const driver = assignDriverForNextRide(drivers, nextRides);
     selection[driver].push(ridesAssigned);
     ridesAssigned++;

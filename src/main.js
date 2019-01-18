@@ -89,8 +89,7 @@ function calcRectSize(canvasWidthOrHeight, columnOrRowCount, roadSize) {
 }
 
 
-function drawVerticalLines(x, y, rectWidth, rectHeight, roadWidth,
-  lineWidth, lineLength, missingLineLength) {
+function drawVerticalLines(x, y, lineWidth, lineLength, missingLineLength) {
   const xLine = x + rectWidth + roadWidth / 2 - lineWidth / 2;
   const linesCount = Math.floor(rectHeight / (lineLength + missingLineLength));
   const linesLength = linesCount * lineLength + (linesCount - 1) * missingLineLength;
@@ -108,8 +107,7 @@ function drawVerticalLines(x, y, rectWidth, rectHeight, roadWidth,
   }
 }
 
-function drawHorizontalLines(x, y, rectWidth, rectHeight, roadHeight,
-  lineWidth, lineLength, missingLineLength) {
+function drawHorizontalLines(x, y, lineWidth, lineLength, missingLineLength) {
   const yLine = y + rectHeight + roadHeight / 2 - lineWidth / 2;
   const linesCount = Math.floor(rectWidth / (lineLength + missingLineLength));
   const linesLength = linesCount * lineLength + (linesCount - 1) * missingLineLength;
@@ -150,8 +148,8 @@ function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount) {
       rectangle.endFill();
       app.stage.addChild(rectangle);
       // drawing road lines between two rectangles. (it prolly is faster outside of loop)
-      drawVerticalLines(x, y, rectWidth, rectHeight, roadSize, 2, 10, 10);
-      drawHorizontalLines(x, y, rectWidth, rectHeight, roadSize, 2, 10, 10);
+      drawVerticalLines(x, y, 2, 10, 10);
+      drawHorizontalLines(x, y, 2, 10, 10);
       // changing x ready for another rectangle
       x = x + roadSize + rectWidth;
     }

@@ -27,29 +27,6 @@ const START_ON_TIME_BONUS = 10;
 
 console.log(`Minimum borders are X ${minX} and Y ${minY}, maximum X ${maxX} and Y ${maxY}`);
 
-export function move(vehicle, rides, xSpeed, ySpeed) {
-  if (vehicle.status === 'Finished') return;
-
-  if (vehicle.destination === '') { // first assignments
-    takeNextRide(vehicle, rides);
-  } else if (destinationReached(vehicle) && clientReady(vehicle)) { // todo client ready - boolean if client is ready for next destination
-    assignDestination(vehicle, rides);
-  }
-  if (!destinationReached(vehicle)) {
-    changeCarLocation(vehicle, xSpeed, ySpeed);
-  }
-}
-
-// todo simple solution. If time make it more fancy (random time turns etc)
-function changeCarLocation(vehicle, xSpeed, ySpeed) {
-  // goes to the x endpoint first
-  if (vehicle.destination[0] !== vehicle.x) {
-    moveX(vehicle, xCoordToPixel(vehicle.destination[0]), xSpeed);
-  } else {
-    moveY(vehicle, yCoordToPixel(vehicle.destination[1]), ySpeed);
-  }
-}
-
 function moveX(vehicle, target, speed) {
   const { car } = vehicle;
   vehicle.status = 'Moving';
@@ -66,7 +43,7 @@ function moveX(vehicle, target, speed) {
       }
       vehicle.x = Math.round(xPixelToCoord(car.x) * 100) / 100;
 
-    // Moving towards the left-side of the map
+      // Moving towards the left-side of the map
     } else if (car.x > target) { // Check to make sure we did not pass the target
       if (car.x - speed > target) { // If target is further than 1 step, take 1 step
         car.rotation = 180 * (Math.PI / 180);
@@ -86,7 +63,7 @@ function moveY(vehicle, target, speed) {
   vehicle.status = 'Moving';
 
   if (car.y > minY && car.y < maxY) {
-    if (car.y < target) {    // moving down
+    if (car.y < target) { // moving down
       if (car.y + speed < target) {
         car.rotation = 90 * (Math.PI / 180);
         car.y += speed;
@@ -94,7 +71,7 @@ function moveY(vehicle, target, speed) {
         car.y = target;
       }
       vehicle.y = Math.round(yPixelToCoord(car.y) * 100) / 100;
-    // moving up
+      // moving up
     } else if (car.y > target) { // Check to make sure we did not pass the target
       if (car.y - speed > target) { // If target is further than 1 step, take 1 step
         car.rotation = 270 * (Math.PI / 180);
@@ -106,6 +83,16 @@ function moveY(vehicle, target, speed) {
     }
   } else {
     console.error('Car went out of bounds on Y coord');
+  }
+}
+
+// todo simple solution. If time make it more fancy (random time turns etc)
+function changeCarLocation(vehicle, xSpeed, ySpeed) {
+  // goes to the x endpoint first
+  if (vehicle.destination[0] !== vehicle.x) {
+    moveX(vehicle, xCoordToPixel(vehicle.destination[0]), xSpeed);
+  } else {
+    moveY(vehicle, yCoordToPixel(vehicle.destination[1]), ySpeed);
   }
 }
 
@@ -128,9 +115,24 @@ function clientReady(car) {
   return window.time >= car.currentRide.earliestStart;
 }
 
-function assignDestination(car, rides) { // serving our client and if we finish with the client we assign a new client
+
+function takeNextRide(car, rides) {
+  const ride = rides[car.rides.shift()];
+  if (ride == null) { // there are no more rides that need serving
+    car.status = 'Finished';
+    return;
+  }
+  car.currentRide = ride;
+  ride.status = `${car.name} approaching`;
+  car.destination = [ride.xStart, ride.yStart];
+  car.client = ride.id;
+}
+
+// serving our client and if we finish with the client we assign a new client
+function assignDestination(car, rides) {
   const ride = car.currentRide;
-  if (car.currentRide.xStart === car.x && car.currentRide.yStart === car.y) { // we start to move to client's destination
+  // we start to move to client's destination
+  if (car.currentRide.xStart === car.x && car.currentRide.yStart === car.y) {
     ride.status = `In ${car.name}'s car`;
     car.destination = [ride.xEnd, ride.yEnd];
 
@@ -140,7 +142,7 @@ function assignDestination(car, rides) { // serving our client and if we finish 
     }
     // Remove marker on pickup
     ride.startMarker.destroy();
-  } else {   // client is in it's destination
+  } else { // client is in it's destination
     ride.status = 'Finished';
     // Give 5 points when finishing ride
     car.score += RIDE_FINISHED;
@@ -150,16 +152,16 @@ function assignDestination(car, rides) { // serving our client and if we finish 
   }
 }
 
+export function move(vehicle, rides, xSpeed, ySpeed) {
+  if (vehicle.status === 'Finished') return;
 
-
-function takeNextRide(car, rides) {
-  const ride = rides[car.rides.shift()];
-  if (ride == null) {   // there are no more rides that need serving
-    car.status = 'Finished';
-    return;
+  if (vehicle.destination === '') { // first assignments
+    takeNextRide(vehicle, rides);
+  } else if (destinationReached(vehicle) && clientReady(vehicle)) {
+    // todo client ready - boolean if client is ready for next destination
+    assignDestination(vehicle, rides);
   }
-  car.currentRide = ride;
-  ride.status = `${car.name} approaching`;
-  car.destination = [ride.xStart, ride.yStart];
-  car.client = ride.id;
+  if (!destinationReached(vehicle)) {
+    changeCarLocation(vehicle, xSpeed, ySpeed);
+  }
 }
