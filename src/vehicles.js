@@ -5,26 +5,13 @@ import {
   yPixelToCoord,
 } from './util';
 
+import { getTime } from './main';
+
 const defaultVehicles = [
-  { id: 0, name: 'Tom', x: 0, y: 0, status: 'Waiting', destination: '', client: '', currentRide: null, time: 0},
-  { id: 1, name: 'Mark', x: 0, y: 1, status: 'Waiting', destination: '', client: '', currentRide: null, time: 0 },
-  { id: 2, name: 'Kim', x: 1, y: 0, status: 'Waiting', destination: '', client: '', currentRide: null, time: 0 },
-  { id: 3, name: 'Megan', x: 2, y: 0, status: 'Waiting', destination: '', client: '', currentRide: null, time: 0 },
-  // { id: 4, name: 'Megan', x: 3, y: 0, status: 'Waiting', destination: '' },
-  // { id: 5, name: 'Megan', x: 4, y: 0, status: 'Waiting', destination: '' },
-  // { id: 6, name: 'Megan', x: 5, y: 0, status: 'Waiting', destination: '' },
-  // { id: 7, name: 'Megan', x: 6, y: 0, status: 'Waiting', destination: '' },
-  // { id: 8, name: 'Megan', x: 7, y: 0, status: 'Waiting', destination: '' },
-  // { id: 9, name: 'Megan', x: 8, y: 0, status: 'Waiting', destination: '' },
-  // { id: 10, name: 'Megan', x: 9, y: 0, status: 'Waiting', destination: '' },
-  // { id: 11, name: 'Megan', x: 0, y: 2, status: 'Waiting', destination: '' },
-  // { id: 12, name: 'Megan', x: 0, y: 3, status: 'Waiting', destination: '' },
-  // { id: 13, name: 'Megan', x: 0, y: 4, status: 'Waiting', destination: '' },
-  // { id: 14, name: 'Megan', x: 0, y: 5, status: 'Waiting', destination: '' },
-  // { id: 15, name: 'Megan', x: 0, y: 6, status: 'Waiting', destination: '' },
-  // { id: 16, name: 'Megan', x: 0, y: 7, status: 'Waiting', destination: '' },
-  // { id: 17, name: 'Megan', x: 0, y: 8, status: 'Waiting', destination: '' },
-  // { id: 18, name: 'Megan', x: 0, y: 9, status: 'Waiting', destination: '' },
+  { id: 0, name: 'Tom', x: 0, y: 0, status: 'Waiting', destination: '', client: '', currentRide: null, score: 0 },
+  { id: 1, name: 'Mark', x: 0, y: 1, status: 'Waiting', destination: '', client: '', currentRide: null, score: 0 },
+  { id: 2, name: 'Kim', x: 1, y: 0, status: 'Waiting', destination: '', client: '', currentRide: null, score: 0 },
+  { id: 3, name: 'Megan', x: 2, y: 0, status: 'Waiting', destination: '', client: '', currentRide: null, score: 0 },
 ];
 
 
@@ -40,12 +27,11 @@ const maxY = yCoordToPixel(9) + 30;
 console.log(`Minimum borders are X ${minX} and Y ${minY}, maximum X ${maxX} and Y ${maxY}`);
 
 export function move(vehicle, rides, xSpeed, ySpeed) {
-  if (vehicle.status === 'Finished')
-    return;
+  if (vehicle.status === 'Finished') return;
 
-  if (vehicle.destination === '') {   // first assignments
+  if (vehicle.destination === '') { // first assignments
     takeNextRide(vehicle, rides);
-  } else if (destinationReached(vehicle) && clientReady(vehicle)) {  // todo client ready - boolean if client is ready for next destination
+  } else if (destinationReached(vehicle) && clientReady(vehicle)) { // todo client ready - boolean if client is ready for next destination
     assignDestination(vehicle, rides);
   }
   if (!destinationReached(vehicle)) {
@@ -53,9 +39,9 @@ export function move(vehicle, rides, xSpeed, ySpeed) {
   }
 }
 
-//todo simple solution. If time make it more fancy (random time turns etc)
+// todo simple solution. If time make it more fancy (random time turns etc)
 function changeCarLocation(vehicle, xSpeed, ySpeed) {
-  //goes to the x endpoint first
+  // goes to the x endpoint first
   if (vehicle.destination[0] !== vehicle.x) {
     moveX(vehicle, xCoordToPixel(vehicle.destination[0]), xSpeed);
   } else {
@@ -142,7 +128,7 @@ function destinationReached(car) {
 }
 
 function clientReady(car) {
-  return car.time >= car.currentRide.earliestStart ;
+  return getTime() >= car.currentRide.earliestStart;
 }
 
 function assignDestination(car, rides) { // serving our client and if we finish with the client we assign a new client

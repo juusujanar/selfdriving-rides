@@ -178,6 +178,10 @@ function formSpeeds() {
   timeChangeInTick = 1 / (tickRate * streetPassingSpeed);
 }
 
+export function getTime() {
+  return time;
+}
+
 
 window.addEventListener('load', () => {
   // Set simulation field size
