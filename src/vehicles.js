@@ -40,7 +40,7 @@ const maxY = yCoordToPixel(9) + 30;
 console.log(`Minimum borders are X ${minX} and Y ${minY}, maximum X ${maxX} and Y ${maxY}`);
 
 export function move(vehicle, rides, xSpeed, ySpeed) {
-  if (vehicle.status === "finished")
+  if (vehicle.status === 'Finished')
     return;
 
   if (vehicle.destination === '') {   // first assignments
@@ -145,7 +145,7 @@ function clientReady(car) {
   return car.time >= car.currentRide.earliestStart ;
 }
 
-function assignDestination(car, rides) { //serving our client and if we finish with the client we assign a new client
+function assignDestination(car, rides) { // serving our client and if we finish with the client we assign a new client
   const ride = car.currentRide;
   if (car.currentRide.xStart === car.x && car.currentRide.yStart === car.y) { // we start to move to client's destination
     ride.status = `In ${car.name}'s car`;
@@ -153,7 +153,7 @@ function assignDestination(car, rides) { //serving our client and if we finish w
     // Remove marker on pickup
     ride.startMarker.destroy();
   } else {   // client is in it's destination
-    ride.status = "Finished";
+    ride.status = 'Finished';
     // Remove marker on finish
     ride.endMarker.destroy();
     takeNextRide(car, rides);
@@ -165,7 +165,7 @@ function assignDestination(car, rides) { //serving our client and if we finish w
 function takeNextRide(car, rides) {
   const ride = rides[car.rides.shift()];
   if (ride == null) {   // there are no more rides that need serving
-    car.status = "finished";
+    car.status = 'Finished';
     return;
   }
   car.currentRide = ride;
@@ -173,4 +173,3 @@ function takeNextRide(car, rides) {
   car.destination = [ride.xStart, ride.yStart];
   car.client = ride.id;
 }
-

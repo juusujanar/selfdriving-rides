@@ -9,14 +9,14 @@
     "build": "webpack --mode production"
   },
   "devDependencies": {
-    "eslint": "^5.11.1",
+    "eslint": "^5.12.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "webpack": "^4.28.2",
-    "webpack-cli": "^3.1.2",
+    "webpack": "^4.28.4",
+    "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {
-    "pixi.js": "^4.8.4"
+    "pixi.js": "^4.8.5"
   }
 }

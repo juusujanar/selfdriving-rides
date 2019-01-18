@@ -4,7 +4,7 @@ import * as updater from './updateFrontend';
 import * as rides from './rides';
 import * as vehicles from './vehicles';
 import { xCoordToPixel, yCoordToPixel, rounded } from './util';
-import {getCarSelection} from './carSelection';
+import { getCarSelection } from './carSelection';
 
 // General configuration of the field sizes
 const ROWS = localStorage.getItem('rows') || 10;
@@ -30,13 +30,13 @@ const lineColorOnRoad = 0xffffff;
 // Array of rides to be accepted by a driver
 const pendingRides = rides.getDefaultRides(RIDE_COUNT);
 // Array of vehicles in use
-let drivers = vehicles.getDefaultVehicles(CAR_COUNT);
+const drivers = vehicles.getDefaultVehicles(CAR_COUNT);
 const driversSelection = getCarSelection(pendingRides, drivers);
 
 // assign rides to drivers
-for (let i = 0; i< drivers.length; i++) {
-  let driver = drivers[i];
-  driver.rides = driversSelection[i]
+for (let i = 0; i < drivers.length; i++) {
+  const driver = drivers[i];
+  driver.rides = driversSelection[i];
 }
 
 const app = new PIXI.Application(RESOLUTION_X, RESOLUTION_Y, { backgroundColor: roadColor });
@@ -163,11 +163,20 @@ function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount) {
  * Next y intersection is +75, so (50,115) or (150,115)
  */
 
-const streetPassingSpeed = 2;  // in seconds
+const streetPassingSpeed = 2; // in seconds
 let time = 0;
 let timeChangeInTick = 0;
 let xSpeed;
 let ySpeed;
+
+function formSpeeds() {
+  const xDistToPass = rectWidth + roadWidth;
+  const yDistToPass = rectHeight + roadHeight;
+  const tickRate = 60;
+  xSpeed = xDistToPass / tickRate / streetPassingSpeed;
+  ySpeed = yDistToPass / tickRate / streetPassingSpeed;
+  timeChangeInTick = 1 / (tickRate * streetPassingSpeed);
+}
 
 
 window.addEventListener('load', () => {
@@ -204,7 +213,7 @@ window.addEventListener('load', () => {
     for (let i = 0, len = drivers.length; i < len; i++) {
       // vehicles.moveX(drivers[i], xCoordToPixel(9));
       vehicles.move(drivers[i], pendingRides, xSpeed, ySpeed);
-      drivers[i].time = rounded(time);
+      document.getElementById('time').innerHTML = rounded(time);
     }
 
     // rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
@@ -218,13 +227,3 @@ window.addEventListener('load', () => {
     // vehicles.turnLeft(drivers[3]);
   });
 });
-
-function formSpeeds() {
-  const xDistToPass = rectWidth + roadWidth;
-  const yDistToPass = rectHeight + roadHeight;
-  const tickRate = 60;
-  xSpeed = xDistToPass / tickRate / streetPassingSpeed;
-  ySpeed = yDistToPass / tickRate / streetPassingSpeed;
-  timeChangeInTick = 1 / (tickRate * streetPassingSpeed);
-}
-
