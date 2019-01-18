@@ -51,7 +51,7 @@ export function yPixelToCoord(pixel) {
 }
 
 export function rounded(time) {
-  let num = Number(time);
-  let roundedString = num.toFixed(2);
+  const num = Number(time);
+  const roundedString = num.toFixed(2);
   return Number(roundedString); // toFixed() returns a string (often suitable for printing already)
 }

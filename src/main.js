@@ -4,7 +4,7 @@ import * as updater from './updateFrontend';
 import * as rides from './rides';
 import * as vehicles from './vehicles';
 import { xCoordToPixel, yCoordToPixel, rounded } from './util';
-import {getCarSelection} from './carSelection';
+import { getCarSelection } from './carSelection';
 
 // General configuration of the field sizes
 const ROWS = localStorage.getItem('rows') || 10;
@@ -19,8 +19,8 @@ let roadWidth = 0;
 let roadHeight = 0;
 
 // rides configuration
-const CAR_COUNT = 2;
-const RIDE_COUNT = 5;
+const CAR_COUNT = 3;
+const RIDE_COUNT = 6;
 
 // Color configurations
 const rectangleColor = 0xc0e8da;
@@ -28,15 +28,15 @@ const roadColor = 0x8c9191;
 const lineColorOnRoad = 0xffffff;
 
 // Array of rides to be accepted by a driver
-const pendingRides = rides.getDefaultRides(RIDE_COUNT);
+let pendingRides = rides.getDefaultRides(RIDE_COUNT);
 // Array of vehicles in use
-let drivers = vehicles.getDefaultVehicles(CAR_COUNT);
+const drivers = vehicles.getDefaultVehicles(CAR_COUNT);
 const driversSelection = getCarSelection(pendingRides, drivers);
 
 // assign rides to drivers
-for (let i = 0; i< drivers.length; i++) {
-  let driver = drivers[i];
-  driver.rides = driversSelection[i]
+for (let i = 0; i < drivers.length; i++) {
+  const driver = drivers[i];
+  driver.rides = driversSelection[i];
 }
 
 const app = new PIXI.Application(RESOLUTION_X, RESOLUTION_Y, { backgroundColor: roadColor });
@@ -47,6 +47,10 @@ window.saveConfiguration = () => {
   localStorage.setItem('rows', document.getElementById('rows').value);
   localStorage.setItem('columns', document.getElementById('columns').value);
   window.location.reload();
+};
+
+window.clearFinished = () => {
+  pendingRides = pendingRides.filter(ride => ride.status !== 'Finished');
 };
 
 
@@ -72,7 +76,7 @@ function addRideMarkers(ride) {
 
 window.addRide = () => {
   if (pendingRides.length < 10) {
-    const ride = rides.generateRideRequest(ROWS - 1, COLUMNS - 1, 0);
+    const ride = rides.generateRideRequest(ROWS - 1, COLUMNS - 1, window.time);
     pendingRides.push(ride);
     addRideMarkers(ride);
   }
@@ -163,11 +167,20 @@ function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount) {
  * Next y intersection is +75, so (50,115) or (150,115)
  */
 
-const streetPassingSpeed = 2;  // in seconds
+const streetPassingSpeed = 2; // in seconds
 let time = 0;
 let timeChangeInTick = 0;
 let xSpeed;
 let ySpeed;
+
+function formSpeeds() {
+  const xDistToPass = rectWidth + roadWidth;
+  const yDistToPass = rectHeight + roadHeight;
+  const tickRate = 60;
+  xSpeed = xDistToPass / tickRate / streetPassingSpeed;
+  ySpeed = yDistToPass / tickRate / streetPassingSpeed;
+  timeChangeInTick = 1 / (tickRate * streetPassingSpeed);
+}
 
 
 window.addEventListener('load', () => {
@@ -177,8 +190,6 @@ window.addEventListener('load', () => {
 
   drawRoads(ROWS, COLUMNS, MAX_ROWS, MAX_COLUMNS);
   formSpeeds();
-
-  // Generate three random ride requests
 
   // Add cars onto the canvas
   const carImage = PIXI.Texture.fromImage('./car.png');
@@ -201,10 +212,11 @@ window.addEventListener('load', () => {
   // Ticket default speed is 1 which equals to approximately 60 FPS
   app.ticker.add(() => {
     time += timeChangeInTick;
+    window.time = time;
     for (let i = 0, len = drivers.length; i < len; i++) {
       // vehicles.moveX(drivers[i], xCoordToPixel(9));
       vehicles.move(drivers[i], pendingRides, xSpeed, ySpeed);
-      drivers[i].time = rounded(time);
+      document.getElementById('time').innerHTML = rounded(time);
     }
 
     // rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
@@ -218,13 +230,3 @@ window.addEventListener('load', () => {
     // vehicles.turnLeft(drivers[3]);
   });
 });
-
-function formSpeeds() {
-  const xDistToPass = rectWidth + roadWidth;
-  const yDistToPass = rectHeight + roadHeight;
-  const tickRate = 60;
-  xSpeed = xDistToPass / tickRate / streetPassingSpeed;
-  ySpeed = yDistToPass / tickRate / streetPassingSpeed;
-  timeChangeInTick = 1 / (tickRate * streetPassingSpeed);
-}
-
