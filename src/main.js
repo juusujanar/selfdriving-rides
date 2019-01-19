@@ -20,7 +20,7 @@ let roadHeight = 0;
 
 // rides configuration
 const CAR_COUNT = 3;
-const RIDE_COUNT = 6;
+const RIDE_COUNT = 8;
 
 // Color configurations
 const rectangleColor = 0xc0e8da;

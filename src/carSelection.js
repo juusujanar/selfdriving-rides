@@ -1,4 +1,6 @@
+
 function assignDriverForNextRide(drivers, nextRides) { // todo
+  console.log(nextRides);
   return 0;
 }
 
@@ -15,8 +17,18 @@ export function getCarSelection(rides, drivers) {
   }
 
   while (ridesAssigned < ridesCount) {
-    const nextRides = rides.slice(ridesAssigned, Math.min(ridesCount,
-      ridesAssigned + driversCount));
+    let lastRideToTakeIndex = Math.min(ridesCount, ridesAssigned + driversCount);
+    const nextRides = rides.slice(ridesAssigned, lastRideToTakeIndex);
+    // maybe we have more rides with the same startTime as we have with current last startTime
+    const lastRideEarliestStart = nextRides[nextRides.length - 1].earliestStart;
+    let nextRide = rides[lastRideToTakeIndex];
+    while (lastRideToTakeIndex + 1 <= ridesCount
+    && nextRide.earliestStart === lastRideEarliestStart) {
+      nextRides.push(nextRide);
+      lastRideToTakeIndex++;
+      nextRide = rides[lastRideToTakeIndex];
+    }
+
     const driver = assignDriverForNextRide(drivers, nextRides);
     selection[driver].push(ridesAssigned);
     ridesAssigned++;
