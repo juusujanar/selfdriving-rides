@@ -205,24 +205,16 @@ window.addEventListener('load', () => {
     addRideMarkers(pendingRides[i]);
   }
 
-  // Ticket default speed is 1 which equals to approximately 60 FPS
+  // Ticker default speed is 1 which equals to approximately 60 FPS
   app.ticker.add(() => {
     time += timeChangeInTick;
     window.time = time;
     for (let driverIndex = 0, len = drivers.length; driverIndex < len; driverIndex++) {
-      // vehicles.moveX(drivers[i], xCoordToPixel(9));
       vehicles.move(drivers, driverIndex, pendingRides, xSpeed, ySpeed);
       document.getElementById('time').innerHTML = rounded(time);
     }
 
-    // rides.generateRideRequest(ROWS, COLUMNS, pendingRides, 0);
-    // console.log(pendingRides);
     updater.updatePendingRides(pendingRides);
     updater.updateVehicles(drivers);
-    // console.log(drivers)
-
-    // Testing vehicle turning
-    // Currently rotating infinitely
-    // vehicles.turnLeft(drivers[3]);
   });
 });
