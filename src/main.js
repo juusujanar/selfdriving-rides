@@ -18,8 +18,8 @@ let roadWidth = 0;
 let roadHeight = 0;
 
 // rides configuration
-const CAR_COUNT = 3;
-const RIDE_COUNT = 8;
+const CAR_COUNT = localStorage.getItem('cars') || 3;
+const RIDE_COUNT = localStorage.getItem('rides') || 8;
 
 // Color configurations
 const rectangleColor = 0xc0e8da;
@@ -42,8 +42,8 @@ document.body.appendChild(app.view);
 
 
 window.saveConfiguration = () => {
-  localStorage.setItem('rows', document.getElementById('rows').value);
-  localStorage.setItem('columns', document.getElementById('columns').value);
+  localStorage.setItem('cars', document.getElementById('vehicle-count').value);
+  localStorage.setItem('rides', document.getElementById('ride-count').value);
   window.location.reload();
 };
 
@@ -181,8 +181,8 @@ function formSpeeds() {
 
 window.addEventListener('load', () => {
   // Set simulation field size
-  // document.getElementById('rows').value = localStorage.getItem('rows') || 10;
-  // document.getElementById('columns').value = localStorage.getItem('columns') || 10;
+  document.getElementById('vehicle-count').value = CAR_COUNT;
+  document.getElementById('ride-count').value = RIDE_COUNT;
 
   drawRoads(ROWS, COLUMNS, MAX_ROWS, MAX_COLUMNS);
   formSpeeds();
