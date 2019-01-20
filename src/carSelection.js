@@ -3,7 +3,6 @@
 /* prolly not useful anymore
 
 
-
 export function getCarSelection(rides, drivers) {
   const selection = {};
   let ridesAssigned = 0;
@@ -35,7 +34,7 @@ export function getCarSelection(rides, drivers) {
   }
 
   return selection;
-}*/
+} */
 
 function canGetThereBeforeStart(ride, driver) {
   console.log(driver);

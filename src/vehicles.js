@@ -3,6 +3,7 @@ import {
   yCoordToPixel,
   xPixelToCoord,
   yPixelToCoord,
+  distance,
 } from './util';
 import { assignRideForCar } from './carSelection';
 
@@ -24,8 +25,7 @@ const minY = yCoordToPixel(0) - 5;
 const maxX = xCoordToPixel(9) + 30;
 const maxY = yCoordToPixel(9) + 30;
 
-const RIDE_FINISHED = 5;
-const START_ON_TIME_BONUS = 10;
+const START_ON_TIME_BONUS = 5;
 
 console.log(`Minimum borders are X ${minX} and Y ${minY}, maximum X ${maxX} and Y ${maxY}`);
 
@@ -162,7 +162,7 @@ function assignDestination(car, vehicles, rides) {
   } else { // client is in it's destination
     ride.status = 'Finished';
     // Give 5 points when finishing ride
-    car.score += RIDE_FINISHED;
+    car.score += distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
     // Remove marker on finish
     ride.endMarker.destroy();
     takeNextRide(vehicles, car.id, rides);

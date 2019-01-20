@@ -55,3 +55,8 @@ export function rounded(time) {
   const roundedString = num.toFixed(2);
   return Number(roundedString); // toFixed() returns a string (often suitable for printing already)
 }
+
+// From (a,b) to (x,y)
+export function distance(a, b, x, y) {
+  return Math.abs(a - x) + Math.abs(b - y);
+}
