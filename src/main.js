@@ -51,6 +51,16 @@ window.clearFinished = () => {
   pendingRides = pendingRides.filter(ride => ride.status !== 'Finished');
 };
 
+window.pause = () => {
+  if (app.ticker.started) {
+    app.ticker.stop();
+    document.getElementById('pause').innerHTML = 'Resume simulation';
+  } else {
+    app.ticker.start();
+    document.getElementById('pause').innerHTML = 'Pause simulation';
+  }
+};
+
 
 function addRideMarkers(ride) {
   const startMarker = PIXI.Texture.fromImage('./red-marker.png');

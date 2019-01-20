@@ -89,12 +89,12 @@ a.bttn:focus {
 }
 
 .bttn {
-  font-size: 18px;
-  letter-spacing: 2px;
+  font-size: 14px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   display: inline-block;
   text-align: center;
-  width: 49%;
+  width: 30%;
   font-weight: bold;
   padding: 14px 0px;
   border: 3px solid #6c7ae0;
