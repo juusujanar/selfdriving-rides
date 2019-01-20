@@ -1,6 +1,42 @@
+function canGetThereBeforeStart(ride, driver) {
+  console.log(driver);
+}
+
+function getMaxPointsForRide(ride, driver) {
+  let score = 0;
+  if (canGetThereBeforeStart(ride, driver)) {
+    score += 1;
+  }
+  if (canFinishRideInTime(ride, driver)) {
+    score += 2;
+  }
+  return score;
+}
+
+function getPointsGivingRides(drivers, nextRides) {
+  const result = {};
+  drivers.forEach((driver) => {
+    result[driver] = [];
+    for (let i = 0; i < nextRides.length; i++) {
+      const nextRide = nextRides[0];
+      const points = getMaxPointsForRide(nextRide, driver);
+      result[driver].push([nextRide, points]);
+    }
+  });
+  return result;
+}
+
+export function assignDriverForNextRide2(drivers, nextRides) { // todo
+  //console.log(nextRides);
+  //const pointsGivingDrives = getPointsGivingRides(drivers, nextRides);
+  //console.log(pointsGivingDrives);
+  return 0;
+}
 
 function assignDriverForNextRide(drivers, nextRides) { // todo
-  console.log(nextRides);
+  //console.log(nextRides);
+  //const pointsGivingDrives = getPointsGivingRides(drivers, nextRides);
+  //console.log(pointsGivingDrives);
   return 0;
 }
 
@@ -35,4 +71,31 @@ export function getCarSelection(rides, drivers) {
   }
 
   return selection;
+}
+
+function getUnservedRides(rides) {
+  const res = [];
+  rides.forEach((ride) => {
+    if (ride.status === 'Waiting') {
+      res.push(ride);
+    }
+  });
+  return res;
+}
+
+
+export function assignRideForCar(car, vehicles, rides) {
+  const assignments = {};
+  const newRides = getUnservedRides(rides);
+  // it is the first assignment so every car gets just one endpoint
+  if (newRides.length === rides.length) {
+    let rideIndex = 0;
+    vehicles.forEach((vehicle) => {
+      assignments[vehicle.id] = [rideIndex];
+      rideIndex += 1;
+    });
+  } else if (newRides.length !== 0) {
+    assignments[car.id] = [newRides[0].id];
+  }
+  return assignments;
 }

@@ -4,7 +4,6 @@ import * as updater from './updateFrontend';
 import * as rides from './rides';
 import * as vehicles from './vehicles';
 import { xCoordToPixel, yCoordToPixel, rounded } from './util';
-import { getCarSelection } from './carSelection';
 
 // General configuration of the field sizes
 const ROWS = localStorage.getItem('rows') || 10;
@@ -31,12 +30,11 @@ const lineColorOnRoad = 0xffffff;
 let pendingRides = rides.getDefaultRides(RIDE_COUNT);
 // Array of vehicles in use
 const drivers = vehicles.getDefaultVehicles(CAR_COUNT);
-const driversSelection = getCarSelection(pendingRides, drivers);
 
 // assign rides to drivers
 for (let i = 0; i < drivers.length; i++) {
   const driver = drivers[i];
-  driver.rides = driversSelection[i];
+  driver.rides = [];
 }
 
 const app = new PIXI.Application(RESOLUTION_X, RESOLUTION_Y, { backgroundColor: roadColor });
@@ -211,9 +209,9 @@ window.addEventListener('load', () => {
   app.ticker.add(() => {
     time += timeChangeInTick;
     window.time = time;
-    for (let i = 0, len = drivers.length; i < len; i++) {
+    for (let driverIndex = 0, len = drivers.length; driverIndex < len; driverIndex++) {
       // vehicles.moveX(drivers[i], xCoordToPixel(9));
-      vehicles.move(drivers[i], pendingRides, xSpeed, ySpeed);
+      vehicles.move(drivers, driverIndex, pendingRides, xSpeed, ySpeed);
       document.getElementById('time').innerHTML = rounded(time);
     }
 

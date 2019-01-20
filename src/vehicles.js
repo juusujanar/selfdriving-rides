@@ -4,6 +4,8 @@ import {
   xPixelToCoord,
   yPixelToCoord,
 } from './util';
+import { assignRideForCar } from './carSelection';
+
 
 const defaultVehicles = [
   { id: 0, name: 'Tom', x: 0, y: 0, status: 'Waiting', destination: '', client: '', currentRide: null, score: 0 },
@@ -115,8 +117,23 @@ function clientReady(car) {
   return window.time >= car.currentRide.earliestStart;
 }
 
+function generateRideForCar(car, vehicles, rides) {
+  const assignedRides = assignRideForCar(car, vehicles, rides);
+  vehicles.forEach((vehicle) => {
+    const carDestinations = assignedRides[vehicle.id];
+    if (carDestinations !== undefined) {
+      carDestinations.forEach((value) => {
+        vehicle.rides.push(value);
+      });
+    }
+  });
+}
 
-function takeNextRide(car, rides) {
+function takeNextRide(vehicles, driverID, rides) {
+  const car = vehicles[driverID];
+  if (car.rides.length === 0) {
+    generateRideForCar(car, vehicles, rides);
+  }
   const ride = rides[car.rides.shift()];
   if (ride == null) { // there are no more rides that need serving
     car.status = 'Finished';
@@ -129,7 +146,7 @@ function takeNextRide(car, rides) {
 }
 
 // serving our client and if we finish with the client we assign a new client
-function assignDestination(car, rides) {
+function assignDestination(car, vehicles, rides) {
   const ride = car.currentRide;
   // we start to move to client's destination
   if (car.currentRide.xStart === car.x && car.currentRide.yStart === car.y) {
@@ -148,18 +165,17 @@ function assignDestination(car, rides) {
     car.score += RIDE_FINISHED;
     // Remove marker on finish
     ride.endMarker.destroy();
-    takeNextRide(car, rides);
+    takeNextRide(vehicles, car.id, rides);
   }
 }
 
-export function move(vehicle, rides, xSpeed, ySpeed) {
+export function move(vehicles, driverID, rides, xSpeed, ySpeed) {
+  const vehicle = vehicles[driverID];
   if (vehicle.status === 'Finished') return;
-
   if (vehicle.destination === '') { // first assignments
-    takeNextRide(vehicle, rides);
+    takeNextRide(vehicles, driverID, rides);
   } else if (destinationReached(vehicle) && clientReady(vehicle)) {
-    // todo client ready - boolean if client is ready for next destination
-    assignDestination(vehicle, rides);
+    assignDestination(vehicle, vehicles, rides);
   }
   if (!destinationReached(vehicle)) {
     changeCarLocation(vehicle, xSpeed, ySpeed);
