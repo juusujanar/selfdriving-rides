@@ -16,7 +16,7 @@ const rideHeaders = {
   status: 'Status',
 };
 const vehicleHeaders = {
-  id: 'ID',
+  // id: 'ID',
   name: 'Name',
   x: 'xPos',
   y: 'yPos',
