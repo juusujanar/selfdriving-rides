@@ -2,14 +2,14 @@ import munkres from 'munkres-js';
 import { distance } from './util';
 
 
-function queuedRidesDist(car) {
+function queuedRidesDist(car, rides) {
   let dist = 0;
   if (car.rides.length === 0) {
     return dist;
   }
-  console.log('check me');
-  const location = JSON.parse(JSON.stringify(car));// doing it do just shut up the ESLint
-  car.rides.forEach((ride) => {
+  const location = Object.assign({}, car);
+  car.rides.forEach((rideId) => {
+    const ride = rides[rideId];
     dist += distance(location.x, location.y, ride.xStart, ride.yStart);
     dist += distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
     location.x = ride.xEnd;
@@ -35,7 +35,8 @@ function distanceFromLastPointToDestination(driver, dest) {
 }
 
 // the destination here shows starting location of a next ride
-function getDestinationReachTime(driver, destination, time) {
+function getDestinationReachTime(driver, rides, destination, time) {
+
   let dist = Math.round(time);
   const ride = driver.currentRide;
 
@@ -45,18 +46,17 @@ function getDestinationReachTime(driver, destination, time) {
   } else if (ride.status === `In ${driver.name}'s car`) {
     dist += distance(driver.x, driver.y, ride.xEnd, ride.yEnd);
   }
-
-  dist += queuedRidesDist(driver);
+  dist += queuedRidesDist(driver, rides);
   dist += distanceFromLastPointToDestination(driver, destination);
   dist = Math.round(dist);
   return dist;
 }
 
 
-function getMaxPointsForRide(ride, driver, time) {
+function getMaxPointsForRide(ride, rides, driver, time) {
   // reversed points system for Hungarian algorithm. Smaller score is better
   let score = 3;
-  const destReachTime = getDestinationReachTime(driver, ride, time);
+  const destReachTime = getDestinationReachTime(driver, rides, ride, time);
   const destEndpointReachTime = destReachTime
       + distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
 
@@ -69,24 +69,23 @@ function getMaxPointsForRide(ride, driver, time) {
   return score;
 }
 
-function getPointsGivingRides(drivers, nextRides, time) {
+function getPointsGivingRides(drivers, rides, nextRides, time) {
   const result = [];
   nextRides.forEach((nextRide) => {
     const rideResult = [];
     for (let i = 0; i < drivers.length; i++) {
       const driver = drivers[i];
-      const points = getMaxPointsForRide(nextRide, driver, time);
+      const points = getMaxPointsForRide(nextRide, rides, driver, time);
       rideResult.push([driver, points]);
     }
     result.push([nextRide, rideResult]);
   });
-
   return result;
 }
 
 function getRidesMatrix(scores) {
   const matrix = [];
-  for (let i = 0; i < scores.length; i++) {
+  for (let i = scores.length - 1; i >= 0; i--) {
     const row = [];
     for (let j = 0; j < scores.length; j++) {
       row.push(scores[i][1][j][1]);
@@ -122,31 +121,27 @@ function getNextRidesToCheck(vehciles, rides) {
 
 function findCarUsingHungarian(vehicles, rides, time) {
   const nextRides = getNextRidesToCheck(vehicles, rides);
-  const nextRidesScores = getPointsGivingRides(vehicles, nextRides, time);
+  const nextRidesScores = getPointsGivingRides(vehicles, rides, nextRides, time);
   const ridesMatrix = getRidesMatrix(nextRidesScores);
   const resultMatrix = munkres(ridesMatrix);
-  console.log(resultMatrix);
-  return resultMatrix[0][1];
+  return vehicles[resultMatrix[resultMatrix.length - 1][1]];
 }
 
-function findClosestCar(destination, vehicles, time) {
-  console.log(destination);
+function findClosestCar(destination, rides, vehicles, time) {
   let bestTime = 100000000;
   let best;
   vehicles.forEach((car) => {
-    const reachingTime = getDestinationReachTime(car, destination, time);
+    const reachingTime = getDestinationReachTime(car, rides, destination, time);
     if (reachingTime < bestTime) {
       bestTime = reachingTime;
       best = car;
     }
   });
-  console.log(best);
-  console.log(bestTime);
   return best;
 }
 
 export function assignRideForCar(car, vehicles, rides, time) {
-  const newRides = getUnservedRides(rides);
+  let newRides = getUnservedRides(rides);
 
   // it is the first assignment so every car gets just one endpoint
   if (newRides.length === rides.length) {
@@ -158,52 +153,21 @@ export function assignRideForCar(car, vehicles, rides, time) {
     });
   } else {
     while (car.rides.length === 0) {
+      newRides = getUnservedRides(rides);
       // all rides are served
       if (newRides.length === 0) {
         return;
       }
       const ride = newRides[0];
       if (newRides.length === 1) {
-        const closestCar = findClosestCar(ride, vehicles, time);
-        console.log(closestCar);
+        const closestCar = findClosestCar(ride, rides, vehicles, time);
         closestCar.rides.push(ride.id);
         ride.served = true;
         return;
       }
-      car.rides.push(ride.id);//  todo make it more advanced
+      const hungarianCar = findCarUsingHungarian(vehicles, rides, time);
+      hungarianCar.rides.push(ride.id);
       ride.served = true;
     }
   }
-}
-
-export function assignRideForCar2(car, vehicles, rides, time) {
-  console.log("assigning drive for following car:");
-  console.log(car);
-  const assignments = {};
-  const newRides = getUnservedRides(rides);
-
-  // it is the first assignment so every car gets just one endpoint
-  if (newRides.length === rides.length) {
-    let rideIndex = 0;
-    vehicles.forEach((vehicle) => {
-      assignments[vehicle.id] = [rideIndex];
-      rideIndex += 1;
-    });
-  } else if (newRides.length === 1) {
-    const closestCar = findClosestCar(newRides[0], vehicles);
-    assignments[closestCar.id] = newRides[0].id;
-  } else if (newRides.length > 1) {
-    console.log(assignments);
-    const hungarianCar = findCarUsingHungarian(vehicles, rides, time);
-    console.log("hungarianCar: ");
-    console.log(hungarianCar);
-    assignments[hungarianCar.toString()] = newRides[0].id;
-    console.log(assignments);
-    assignments[car.id.toString()] = [newRides[1].id];//  todo make it more advanced
-  }
-  console.log("Car result after assignment: ");
-  console.log(assignments);
-  console.log(assignments[car]);
-  //assignments[car.id] = [newRides[0].id];//  todo make it more advanced
-  return assignments;
 }
