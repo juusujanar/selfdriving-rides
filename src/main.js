@@ -231,7 +231,7 @@ window.addEventListener('load', () => {
       updater.updatePendingRides(pendingRides);
       updater.updateVehicles(drivers);
       document.getElementById('time').innerHTML = rounded(time);
-      document.getElementById('fps').innerHTML = Math.round(app.ticker.FPS * 100) / 100;
+      document.getElementById('fps').innerHTML = (Math.round(app.ticker.FPS * 100) / 100).toFixed(2);
     }
   });
 });
