@@ -110,7 +110,7 @@ function nextRidesWithEqualStartTimeRides(nextRides, newRides) {
 }
 
 function getUnservedRides(rides) {
-  return rides.filter(ride => ride.status === 'Waiting');
+  return rides.filter(ride => ride.served === false);
 }
 
 function getNextRidesToCheck(vehciles, rides) {
@@ -129,7 +129,23 @@ function findCarUsingHungarian(vehicles, rides, time) {
   return resultMatrix[0][1];
 }
 
-export function assignRideForCar(car, vehicles, rides, time) { //todo assignRideForCar2 without using dictionary
+function findClosestCar(destination, vehicles, time) {
+  console.log(destination);
+  let bestTime = 100000000;
+  let best;
+  vehicles.forEach((car) => {
+    const reachingTime = getDestinationReachTime(car, destination, time);
+    if (reachingTime < bestTime) {
+      bestTime = reachingTime;
+      best = car;
+    }
+  });
+  console.log(best);
+  console.log(bestTime);
+  return best;
+}
+
+export function assignRideForCar(car, vehicles, rides, time) {
   const newRides = getUnservedRides(rides);
 
   // it is the first assignment so every car gets just one endpoint
@@ -137,15 +153,25 @@ export function assignRideForCar(car, vehicles, rides, time) { //todo assignRide
     let rideIndex = 0;
     vehicles.forEach((vehicle) => {
       vehicle.rides.push(rideIndex);
+      rides[rideIndex].served = true;
       rideIndex += 1;
     });
   } else {
-    console.log("here");
     while (car.rides.length === 0) {
-      if (newRides.length === 0) {// all rides are served
+      // all rides are served
+      if (newRides.length === 0) {
         return;
       }
-      car.rides.push(newRides[0].id);//  todo make it more advanced
+      const ride = newRides[0];
+      if (newRides.length === 1) {
+        const closestCar = findClosestCar(ride, vehicles, time);
+        console.log(closestCar);
+        closestCar.rides.push(ride.id);
+        ride.served = true;
+        return;
+      }
+      car.rides.push(ride.id);//  todo make it more advanced
+      ride.served = true;
     }
   }
 }

@@ -122,14 +122,13 @@ function takeNextRide(vehicles, driverID, rides, time) {
   if (car.rides.length === 0) {
     assignRideForCar(car, vehicles, rides, time);
   }
+
   const ride = rides[car.rides.shift()];
-  //console.log("assigned ride for the car:");
-  //console.log(car);
-  //console.log(ride);
   if (ride == null) { // there are no more rides that need serving
     car.status = 'Finished';
     return;
   }
+
   car.currentRide = ride;
   ride.status = `${car.name} approaching`;
   car.destination = [ride.xStart, ride.yStart];
