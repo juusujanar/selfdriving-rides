@@ -6,6 +6,7 @@ function queuedRidesDist(car) {
   if (car.rides.length === 0) {
     return dist;
   }
+  console.log('check me');
   const location = JSON.parse(JSON.stringify(car));// doing it do just shut up the ESLint
   car.rides.forEach((ride) => {
     dist += distance(location.x, location.y, ride.xStart, ride.yStart);
@@ -36,7 +37,6 @@ function distanceFromLastPointToDestination(driver, dest) {
 function getDestinationReachTime(driver, destination, time) {
   let dist = Math.round(time);
   const ride = driver.currentRide;
-  console.log(driver.name);
 
   if (ride.status === `${driver.name} approaching`) {
     dist += distance(driver.x, driver.y, ride.xStart, ride.yStart);
@@ -48,7 +48,6 @@ function getDestinationReachTime(driver, destination, time) {
   dist += queuedRidesDist(driver);
   dist += distanceFromLastPointToDestination(driver, destination);
   dist = Math.round(dist);
-  console.log(dist);
   return dist;
 }
 
@@ -70,15 +69,17 @@ function getMaxPointsForRide(ride, driver, time) {
 }
 
 function getPointsGivingRides(drivers, nextRides, time) {
-  const result = {};
+  const result = [];
   nextRides.forEach((nextRide) => {
-    result[nextRide] = [];
+    const rideResult = [];
     for (let i = 0; i < drivers.length; i++) {
       const driver = drivers[i];
       const points = getMaxPointsForRide(nextRide, driver, time);
-      result[nextRide].push([nextRide, points]);
+      rideResult.push([driver, points]);
     }
+    result.push([nextRide, rideResult]);
   });
+
   return result;
 }
 
