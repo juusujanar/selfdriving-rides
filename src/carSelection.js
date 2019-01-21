@@ -1,12 +1,6 @@
 import munkres from 'munkres-js';
 import { distance } from './util';
 
-console.debug(munkres([
-  [400, 150, 400],
-  [400, 450, 600],
-  [300, 225, 300]
-]));
-
 
 function queuedRidesDist(car) {
   let dist = 0;
@@ -90,6 +84,17 @@ function getPointsGivingRides(drivers, nextRides, time) {
   return result;
 }
 
+function getRidesMatrix(scores) {
+  const matrix = [];
+  for (let i = 0; i < scores.length; i++) {
+    const row = [];
+    for (let j = 0; j < scores.length; j++) {
+      row.push(scores[i][1][j][1]);
+    }
+    matrix.push(row);
+  }
+  return matrix;
+}
 
 function nextRidesWithEqualStartTimeRides(nextRides, newRides) {
   const firstStartTime = nextRides[0].earliestStart;
@@ -121,9 +126,37 @@ function getNextRidesToCheck(vehciles, rides) {
   return nextRidesWithEqualStartTimeRides(nextRides, newRides);
 }
 
-export function assignRideForCar(car, vehicles, rides, time) {
+function findCarUsingHungarian(vehicles, rides, time) {
+  const nextRides = getNextRidesToCheck(vehicles, rides);
+  const nextRidesScores = getPointsGivingRides(vehicles, nextRides, time);
+  const ridesMatrix = getRidesMatrix(nextRidesScores);
+  const resultMatrix = munkres(ridesMatrix);
+  console.log(resultMatrix);
+  return resultMatrix[0][1];
+}
+
+export function assignRideForCar(car, vehicles, rides, time) { //todo assignRideForCar2 without using dictionary
+  const newRides = getUnservedRides(rides);
+
+  if (newRides.length === rides.length) {
+    let rideIndex = 0;
+    vehicles.forEach((vehicle) => {
+      vehicle.rides.push(rideIndex);
+      rideIndex += 1;
+    });
+  } else {
+    while (car.currentRide == null) { //todo
+      car.rides.push(newRides[0].id);//  todo make it more advanced
+    }
+  }
+}
+
+export function assignRideForCar2(car, vehicles, rides, time) {
+  console.log("assigning drive for following car:");
+  console.log(car);
   const assignments = {};
   const newRides = getUnservedRides(rides);
+
   // it is the first assignment so every car gets just one endpoint
   if (newRides.length === rides.length) {
     let rideIndex = 0;
@@ -131,11 +164,21 @@ export function assignRideForCar(car, vehicles, rides, time) {
       assignments[vehicle.id] = [rideIndex];
       rideIndex += 1;
     });
-  } else if (newRides.length !== 0) {
-    assignments[car.id] = [newRides[0].id];//  todo make it more advanced
-    const nextRides = getNextRidesToCheck(vehicles, rides);
-    const nextRidesScores = getPointsGivingRides(vehicles, nextRides, time);
-    console.log(nextRidesScores);
+  } else if (newRides.length === 1) {
+    const closestCar = findClosestCar(newRides[0], vehicles);
+    assignments[closestCar.id] = newRides[0].id;
+  } else if (newRides.length > 1) {
+    console.log(assignments);
+    const hungarianCar = findCarUsingHungarian(vehicles, rides, time);
+    console.log("hungarianCar: ");
+    console.log(hungarianCar);
+    assignments[hungarianCar.toString()] = newRides[0].id;
+    console.log(assignments);
+    assignments[car.id.toString()] = [newRides[1].id];//  todo make it more advanced
   }
+  console.log("Car result after assignment: ");
+  console.log(assignments);
+  console.log(assignments[car]);
+  //assignments[car.id] = [newRides[0].id];//  todo make it more advanced
   return assignments;
 }
