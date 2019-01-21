@@ -1,4 +1,11 @@
+import munkres from 'munkres-js';
 import { distance } from './util';
+
+console.debug(munkres([
+  [400, 150, 400],
+  [400, 450, 600],
+  [300, 225, 300]
+]));
 
 
 function queuedRidesDist(car) {
