@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js';
 import * as updater from './updateFrontend';
 import * as rides from './rides';
 import * as vehicles from './vehicles';
-import { xCoordToPixel, yCoordToPixel, rounded } from './util';
+import { xCoordToPixel, yCoordToPixel, rounded, sortRides } from './util';
 
 // General configuration of the field sizes
 const ROWS = localStorage.getItem('rows') || 10;
@@ -44,6 +44,7 @@ document.body.appendChild(app.view);
 window.saveConfiguration = () => {
   localStorage.setItem('cars', document.getElementById('vehicle-count').value);
   localStorage.setItem('rides', document.getElementById('ride-count').value);
+  localStorage.setItem('speed', document.getElementById('car-speed').value);
   window.location.reload();
 };
 
@@ -86,6 +87,7 @@ window.addRide = () => {
   if (pendingRides.length < 10) {
     const ride = rides.generateRideRequest(ROWS - 1, COLUMNS - 1, window.time);
     pendingRides.push(ride);
+    sortRides(pendingRides);
     addRideMarkers(ride);
   }
 };
@@ -173,7 +175,7 @@ function drawRoads(rowCount, columnCount, maxColumnCount, maxRowCount) {
  * Next y intersection is +75, so (50,115) or (150,115)
  */
 
-const streetPassingSpeed = 2; // in seconds
+const streetPassingSpeed = localStorage.getItem('speed') || 2; // in seconds
 let time = 0;
 let timeChangeInTick = 0;
 let xSpeed;
@@ -193,6 +195,9 @@ window.addEventListener('load', () => {
   // Set simulation field size
   document.getElementById('vehicle-count').value = CAR_COUNT;
   document.getElementById('ride-count').value = RIDE_COUNT;
+  document.getElementById('car-speed').value = streetPassingSpeed;
+
+  sortRides(pendingRides);
 
   drawRoads(ROWS, COLUMNS, MAX_ROWS, MAX_COLUMNS);
   formSpeeds();

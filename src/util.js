@@ -60,3 +60,16 @@ export function rounded(time) {
 export function distance(a, b, x, y) {
   return Math.abs(a - x) + Math.abs(b - y);
 }
+
+export function sortRides(rides) {
+  // Sorts to ascending order
+  rides.sort((a, b) => {
+    if (a.earliestStart > b.earliestStart) {
+      return 1;
+    }
+    if (a.earliestStart < b.earliestStart) {
+      return -1;
+    }
+    return 0;
+  });
+}
