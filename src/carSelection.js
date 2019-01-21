@@ -132,6 +132,7 @@ function findCarUsingHungarian(vehicles, rides, time) {
 export function assignRideForCar(car, vehicles, rides, time) { //todo assignRideForCar2 without using dictionary
   const newRides = getUnservedRides(rides);
 
+  // it is the first assignment so every car gets just one endpoint
   if (newRides.length === rides.length) {
     let rideIndex = 0;
     vehicles.forEach((vehicle) => {
@@ -139,7 +140,11 @@ export function assignRideForCar(car, vehicles, rides, time) { //todo assignRide
       rideIndex += 1;
     });
   } else {
-    while (car.currentRide == null) { //todo
+    console.log("here");
+    while (car.rides.length === 0) {
+      if (newRides.length === 0) {// all rides are served
+        return;
+      }
       car.rides.push(newRides[0].id);//  todo make it more advanced
     }
   }
