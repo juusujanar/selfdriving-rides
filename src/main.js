@@ -221,10 +221,13 @@ window.addEventListener('load', () => {
     window.time = time;
     for (let driverIndex = 0, len = drivers.length; driverIndex < len; driverIndex++) {
       vehicles.move(drivers, driverIndex, pendingRides, xSpeed, ySpeed, time);
-      document.getElementById('time').innerHTML = rounded(time);
     }
 
-    updater.updatePendingRides(pendingRides);
-    updater.updateVehicles(drivers);
+    if (Math.ceil(time * 100) % 5 === 0) {
+      updater.updatePendingRides(pendingRides);
+      updater.updateVehicles(drivers);
+      document.getElementById('time').innerHTML = rounded(time);
+      document.getElementById('fps').innerHTML = Math.round(app.ticker.FPS * 100) / 100;
+    }
   });
 });
