@@ -21,6 +21,8 @@
           <input type="number" id="vehicle-count" min="1" max="4" />
           <label>Initial rides (0-8)</label>
           <input type="number" id="ride-count" min="0" max="10"/>
+          <label>Vehicle speed (0-5)</label>
+          <input type="number" id="car-speed" />
         </fieldset>
       </form>
     </div>
@@ -29,7 +31,7 @@
     <a href="javascript:;" class="bttn" onClick="clearFinished()">Click to clear finished rides</a>
     <a href="javascript:;" class="bttn" id="pause" onClick="pause()">Pause simulation</a>
 
-    <h2 class="time-info">Time:&nbsp;<div id="time">0</div></h3>
+    <h2 class="time-info">FPS:&nbsp;<div id="fps">0</div>&nbsp;|&nbsp;Time:&nbsp;<div id="time">0</div></h2>
     
     <div class="information">
       <div id="vehicles" class="info-column"></div>
