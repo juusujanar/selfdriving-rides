@@ -227,10 +227,10 @@ window.addEventListener('load', () => {
       vehicles.move(drivers, driverIndex, pendingRides, xSpeed, ySpeed, time);
     }
 
-    if (Math.ceil(time * 100) % 5 === 0) {
+    if (Math.ceil(time * 100) % 2 === 0) {
       updater.updatePendingRides(pendingRides);
       updater.updateVehicles(drivers);
-      document.getElementById('time').innerHTML = rounded(time);
+      document.getElementById('time').innerHTML = rounded(time).toFixed(2);
       document.getElementById('fps').innerHTML = (Math.round(app.ticker.FPS * 100) / 100).toFixed(2);
     }
   });
