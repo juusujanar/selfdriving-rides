@@ -6,10 +6,10 @@ import * as vehicles from './vehicles';
 import { xCoordToPixel, yCoordToPixel, rounded, sortRides } from './util';
 
 // General configuration of the field sizes
-const ROWS = localStorage.getItem('rows') || 10;
-const COLUMNS = localStorage.getItem('columns') || 10;
-const MAX_ROWS = localStorage.getItem('max_rows') || 10;
-const MAX_COLUMNS = localStorage.getItem('max_columns') || 10;
+const ROWS = 10;
+const COLUMNS = 10;
+const MAX_ROWS = 10;
+const MAX_COLUMNS = 10;
 const RESOLUTION_X = 1024;
 const RESOLUTION_Y = 768;
 let rectWidth = 0;
@@ -31,10 +31,12 @@ let pendingRides = rides.getDefaultRides(RIDE_COUNT);
 // Array of vehicles in use
 const drivers = vehicles.getDefaultVehicles(CAR_COUNT);
 
+const startMarker = PIXI.Texture.fromImage('./red-marker.png');
+const endMarker = PIXI.Texture.fromImage('./green-marker.png');
+
 // assign rides to drivers
 for (let i = 0; i < drivers.length; i++) {
-  const driver = drivers[i];
-  driver.rides = [];
+  drivers[i].rides = [];
 }
 
 const app = new PIXI.Application(RESOLUTION_X, RESOLUTION_Y, { backgroundColor: roadColor });
@@ -64,9 +66,6 @@ window.pause = () => {
 
 
 function addRideMarkers(ride) {
-  const startMarker = PIXI.Texture.fromImage('./red-marker.png');
-  const endMarker = PIXI.Texture.fromImage('./green-marker.png');
-
   const start = new PIXI.Sprite(startMarker);
   start.anchor.set(0.5, 0.9); // Center sprite's anchor point
   start.x = xCoordToPixel(ride.xStart);
