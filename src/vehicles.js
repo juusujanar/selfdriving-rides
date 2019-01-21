@@ -117,22 +117,10 @@ function clientReady(car) {
   return window.time >= car.currentRide.earliestStart;
 }
 
-function generateRideForCar(car, vehicles, rides, time) {
-  const assignedRides = assignRideForCar(car, vehicles, rides, time);
-  vehicles.forEach((vehicle) => {
-    const carDestinations = assignedRides[vehicle.id];
-    if (carDestinations !== undefined) {
-      carDestinations.forEach((value) => {
-        vehicle.rides.push(value);
-      });
-    }
-  });
-}
-
 function takeNextRide(vehicles, driverID, rides, time) {
   const car = vehicles[driverID];
   if (car.rides.length === 0) {
-    generateRideForCar(car, vehicles, rides, time);
+    assignRideForCar(car, vehicles, rides, time);
   }
   const ride = rides[car.rides.shift()];
   if (ride == null) { // there are no more rides that need serving
