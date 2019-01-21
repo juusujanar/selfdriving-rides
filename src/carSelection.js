@@ -110,13 +110,7 @@ function nextRidesWithEqualStartTimeRides(nextRides, newRides) {
 }
 
 function getUnservedRides(rides) {
-  const res = [];
-  rides.forEach((ride) => {
-    if (ride.status === 'Waiting') {
-      res.push(ride);
-    }
-  });
-  return res;
+  return rides.filter(ride => ride.status === 'Waiting');
 }
 
 function getNextRidesToCheck(vehciles, rides) {
