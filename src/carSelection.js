@@ -1,68 +1,87 @@
+import { distance } from './util';
 
 
-/* prolly not useful anymore
-
-
-export function getCarSelection(rides, drivers) {
-  const selection = {};
-  let ridesAssigned = 0;
-  const driversCount = drivers.length;
-  const ridesCount = rides.length;
-
-  // assign one first ride for each car
-  for (let i = 0; i < drivers.length; i++) {
-    selection[i] = [ridesAssigned];
-    ridesAssigned++;
+function queuedRidesDist(car) {
+  let dist = 0;
+  if (car.rides.length === 0) {
+    return dist;
   }
-
-  while (ridesAssigned < ridesCount) {
-    let lastRideToTakeIndex = Math.min(ridesCount, ridesAssigned + driversCount);
-    const nextRides = rides.slice(ridesAssigned, lastRideToTakeIndex);
-    // maybe we have more rides with the same startTime as we have with current last startTime
-    const lastRideEarliestStart = nextRides[nextRides.length - 1].earliestStart;
-    let nextRide = rides[lastRideToTakeIndex];
-    while (lastRideToTakeIndex + 1 <= ridesCount
-    && nextRide.earliestStart === lastRideEarliestStart) {
-      nextRides.push(nextRide);
-      lastRideToTakeIndex++;
-      nextRide = rides[lastRideToTakeIndex];
-    }
-
-    const driver = assignDriverForNextRide(drivers, nextRides);
-    selection[driver].push(ridesAssigned);
-    ridesAssigned++;
-  }
-
-  return selection;
-} */
-
-function canGetThereBeforeStart(ride, driver) {
-  console.log(driver);
+  const location = JSON.parse(JSON.stringify(car));// doing it do just shut up the ESLint
+  car.rides.forEach((ride) => {
+    dist += distance(location.x, location.y, ride.xStart, ride.yStart);
+    dist += distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
+    location.x = ride.xEnd;
+    location.y = ride.yEnd;
+  });
+  return dist;
 }
 
-function getMaxPointsForRide(ride, driver) {
-  let score = 0;
-  if (canGetThereBeforeStart(ride, driver)) {
-    score += 1;
+function findLastPoint(car) {
+  if (car.rides.length > 0) {
+    const lastRide = car.rides[car.rides.length - 1];
+    return [lastRide.xEnd, lastRide.yEnd];
   }
-  if (canFinishRideInTime(ride, driver)) {
-    score += 2;
+  if (car.currentRide !== undefined) {
+    return [car.currentRide.xEnd, car.currentRide.yEnd];
+  }
+  return [car.x, car.y];
+}
+
+function distanceFromLastPointToDestination(driver, dest) {
+  const lastPoint = findLastPoint(driver);
+  return distance(lastPoint[0], lastPoint[1], dest.xStart, dest.yStart);
+}
+
+// the destination here shows starting location of a next ride
+function getDestinationReachTime(driver, destination, time) {
+  let dist = Math.round(time);
+  const ride = driver.currentRide;
+  console.log(driver.name);
+
+  if (ride.status === `${driver.name} approaching`) {
+    dist += distance(driver.x, driver.y, ride.xStart, ride.yStart);
+    dist += distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
+  } else if (ride.status === `In ${driver.name}'s car`) {
+    dist += distance(driver.x, driver.y, ride.xEnd, ride.yEnd);
+  }
+
+  dist += queuedRidesDist(driver);
+  dist += distanceFromLastPointToDestination(driver, destination);
+  dist = Math.round(dist);
+  console.log(dist);
+  return dist;
+}
+
+
+function getMaxPointsForRide(ride, driver, time) {
+  // reversed points system for Hungarian algorithm. Smaller score is better
+  let score = 3;
+  const destReachTime = getDestinationReachTime(driver, ride, time);
+  const destEndpointReachTime = destReachTime
+      + distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
+
+  if (destReachTime <= ride.earliestStart) {
+    score -= 1;
+  }
+  if (destEndpointReachTime <= ride.latestFinish) {
+    score -= 2;
   }
   return score;
 }
 
-function getPointsGivingRides(drivers, nextRides) {
+function getPointsGivingRides(drivers, nextRides, time) {
   const result = {};
-  drivers.forEach((driver) => {
-    result[driver] = [];
-    for (let i = 0; i < nextRides.length; i++) {
-      const nextRide = nextRides[0];
-      const points = getMaxPointsForRide(nextRide, driver);
-      result[driver].push([nextRide, points]);
+  nextRides.forEach((nextRide) => {
+    result[nextRide] = [];
+    for (let i = 0; i < drivers.length; i++) {
+      const driver = drivers[i];
+      const points = getMaxPointsForRide(nextRide, driver, time);
+      result[nextRide].push([nextRide, points]);
     }
   });
   return result;
 }
+
 
 function nextRidesWithEqualStartTimeRides(nextRides, newRides) {
   const firstStartTime = nextRides[0].earliestStart;
@@ -94,7 +113,7 @@ function getNextRidesToCheck(vehciles, rides) {
   return nextRidesWithEqualStartTimeRides(nextRides, newRides);
 }
 
-export function assignRideForCar(car, vehicles, rides) {
+export function assignRideForCar(car, vehicles, rides, time) {
   const assignments = {};
   const newRides = getUnservedRides(rides);
   // it is the first assignment so every car gets just one endpoint
@@ -107,6 +126,8 @@ export function assignRideForCar(car, vehicles, rides) {
   } else if (newRides.length !== 0) {
     assignments[car.id] = [newRides[0].id];//  todo make it more advanced
     const nextRides = getNextRidesToCheck(vehicles, rides);
+    const nextRidesScores = getPointsGivingRides(vehicles, nextRides, time);
+    console.log(nextRidesScores);
   }
   return assignments;
 }

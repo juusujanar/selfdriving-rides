@@ -8,9 +8,9 @@ const defaultRides = [
   { id: 2, xStart: 2, yStart: 5, xEnd: 3, yEnd: 7, earliestStart: 7, latestFinish: 15, status: 'Waiting' },
   { id: 3, xStart: 9, yStart: 2, xEnd: 0, yEnd: 0, earliestStart: 9, latestFinish: 15, status: 'Waiting' },
   { id: 4, xStart: 5, yStart: 1, xEnd: 2, yEnd: 4, earliestStart: 11, latestFinish: 16, status: 'Waiting' },
-  { id: 5, xStart: 1, yStart: 0, xEnd: 1, yEnd: 1, earliestStart: 11, latestFinish: 18, status: 'Waiting' },
-  { id: 6, xStart: 4, yStart: 2, xEnd: 2, yEnd: 5, earliestStart: 11, latestFinish: 28, status: 'Waiting' },
-  { id: 7, xStart: 7, yStart: 8, xEnd: 4, yEnd: 1, earliestStart: 11, latestFinish: 28, status: 'Waiting' },
+  { id: 5, xStart: 1, yStart: 0, xEnd: 1, yEnd: 1, earliestStart: 13, latestFinish: 18, status: 'Waiting' },
+  { id: 6, xStart: 4, yStart: 2, xEnd: 2, yEnd: 5, earliestStart: 15, latestFinish: 28, status: 'Waiting' },
+  { id: 7, xStart: 7, yStart: 8, xEnd: 4, yEnd: 1, earliestStart: 18, latestFinish: 28, status: 'Waiting' },
 ];
 
 

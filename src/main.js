@@ -220,7 +220,7 @@ window.addEventListener('load', () => {
     time += timeChangeInTick;
     window.time = time;
     for (let driverIndex = 0, len = drivers.length; driverIndex < len; driverIndex++) {
-      vehicles.move(drivers, driverIndex, pendingRides, xSpeed, ySpeed);
+      vehicles.move(drivers, driverIndex, pendingRides, xSpeed, ySpeed, time);
       document.getElementById('time').innerHTML = rounded(time);
     }
 
