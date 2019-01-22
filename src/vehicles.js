@@ -118,6 +118,22 @@ function clientReady(car) {
   return window.time >= car.currentRide.earliestStart;
 }
 
+function removeEndMarker(ride) {
+  try {
+    ride.endMarker.destroy();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function removeStartMarker(ride) {
+  try {
+    ride.startMarker.destroy();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 function takeNextRide(vehicles, driverID, rides, time) {
   const car = vehicles[driverID];
   if (car.rides.length === 0) {
@@ -150,7 +166,7 @@ function assignDestination(car, vehicles, rides, time) {
       car.score += START_ON_TIME_BONUS;
     }
     // Remove marker on pickup
-    ride.startMarker.destroy();
+    removeStartMarker(ride);
   } else { // client is in it's destination
     ride.status = 'Finished';
     // Give distance points when finishing ride
@@ -158,7 +174,7 @@ function assignDestination(car, vehicles, rides, time) {
       car.score += distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
     }
     // Remove marker on finish
-    ride.endMarker.destroy();
+    removeEndMarker(ride);
     takeNextRide(vehicles, car.id, rides, time);
   }
 }
