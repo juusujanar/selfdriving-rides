@@ -152,7 +152,9 @@ function assignDestination(car, vehicles, rides, time) {
   } else { // client is in it's destination
     ride.status = 'Finished';
     // Give distance points when finishing ride
-    car.score += distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
+    if (Math.round(time) <= time) {
+      car.score += distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
+    }
     // Remove marker on finish
     ride.endMarker.destroy();
     takeNextRide(vehicles, car.id, rides, time);
