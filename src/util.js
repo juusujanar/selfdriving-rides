@@ -61,12 +61,6 @@ export function distance(a, b, x, y) {
   return Math.abs(a - x) + Math.abs(b - y);
 }
 
-function updateOrderupdateOrder(rides) {
-  for (let i = 0; i < rides.length; i++) {
-    rides[i].order = i;
-  }
-}
-
 export function sortRides(rides) {
   // Sorts to ascending order
   rides.sort((a, b) => {
@@ -78,5 +72,17 @@ export function sortRides(rides) {
     }
     return 0;
   });
-  updateOrderupdateOrder(rides);
+}
+
+export function getUnservedRides(rides) {
+  return rides.filter(ride => ride.served === false);
+}
+
+export function getRideWithId(rides, id) {
+  for (let i = 0; i < rides.length; i++) {
+    const ride = rides[i];
+    if (ride.id === id) {
+      return ride;
+    }
+  }
 }

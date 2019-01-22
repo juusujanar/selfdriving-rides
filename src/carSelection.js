@@ -1,5 +1,5 @@
 import munkres from 'munkres-js';
-import { distance } from './util';
+import { distance, getUnservedRides, getRideWithId } from './util';
 
 
 function queuedRidesDist(car, rides) {
@@ -9,7 +9,7 @@ function queuedRidesDist(car, rides) {
   }
   const location = Object.assign({}, car);
   car.rides.forEach((rideId) => {
-    const ride = rides[rideId];
+    const ride = getRideWithId(rides, rideId);
     dist += distance(location.x, location.y, ride.xStart, ride.yStart);
     dist += distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
     location.x = ride.xEnd;
@@ -36,19 +36,22 @@ function distanceFromLastPointToDestination(driver, dest) {
 
 // the destination here shows starting location of a next ride
 function getDestinationReachTime(driver, rides, destination, time) {
-
   let dist = Math.round(time);
   const ride = driver.currentRide;
-
-  if (ride.status === `${driver.name} approaching`) {
-    dist += distance(driver.x, driver.y, ride.xStart, ride.yStart);
-    dist += distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
-  } else if (ride.status === `In ${driver.name}'s car`) {
-    dist += distance(driver.x, driver.y, ride.xEnd, ride.yEnd);
+  // happpens if car already finished
+  if (ride === undefined || ride == null) {
+    dist += distance(driver.x, driver.y, destination.xStart, destination.yStart);
+  } else {
+    if (ride.status === `${driver.name} approaching`) {
+      dist += distance(driver.x, driver.y, ride.xStart, ride.yStart);
+      dist += distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
+    } else if (ride.status === `In ${driver.name}'s car`) {
+      dist += distance(driver.x, driver.y, ride.xEnd, ride.yEnd);
+    }
+    dist += queuedRidesDist(driver, rides);
+    dist += distanceFromLastPointToDestination(driver, destination);
+    dist = Math.round(dist);
   }
-  dist += queuedRidesDist(driver, rides);
-  dist += distanceFromLastPointToDestination(driver, destination);
-  dist = Math.round(dist);
   return dist;
 }
 
@@ -108,9 +111,6 @@ function nextRidesWithEqualStartTimeRides(nextRides, newRides) {
   return nextRides;
 }
 
-function getUnservedRides(rides) {
-  return rides.filter(ride => ride.served === false);
-}
 
 function getNextRidesToCheck(vehciles, rides) {
   const newRides = getUnservedRides(rides);
@@ -161,12 +161,13 @@ export function assignRideForCar(car, vehicles, rides, time, onStartBonus) {
       const ride = newRides[0];
       if (newRides.length === 1) {
         const closestCar = findClosestCar(ride, rides, vehicles, time);
-        closestCar.rides.push(ride.order);
+        closestCar.rides.push(ride.id);
         ride.served = true;
         return;
       }
       const hungarianCar = findCarUsingHungarian(vehicles, rides, time, onStartBonus);
-      hungarianCar.rides.push(ride.order);
+      hungarianCar.rides.push(ride.id);
+      hungarianCar.status = 'Moving';
       ride.served = true;
     }
   }

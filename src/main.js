@@ -84,7 +84,7 @@ function addRideMarkers(ride) {
 
 window.addRide = () => {
   if (pendingRides.length < 10) {
-    const ride = rides.generateRideRequest(ROWS - 1, COLUMNS - 1, window.time);
+    const ride = rides.generateRideRequest(ROWS - 1, COLUMNS - 1, window.time, drivers);
     pendingRides.push(ride);
     sortRides(pendingRides);
     addRideMarkers(ride);
