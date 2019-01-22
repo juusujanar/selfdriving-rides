@@ -85,4 +85,5 @@ export function getRideWithId(rides, id) {
       return ride;
     }
   }
+  return null;
 }

@@ -142,14 +142,18 @@ function findClosestCar(destination, rides, vehicles, time) {
 
 export function assignRideForCar(car, vehicles, rides, time, onStartBonus) {
   let newRides = getUnservedRides(rides);
-
   // it is the first assignment so every car gets just one endpoint
   if (newRides.length === rides.length) {
+    const ridesCount = rides.length;
     let rideIndex = 0;
     vehicles.forEach((vehicle) => {
+      if (rideIndex >= ridesCount) {
+        return;
+      }
       vehicle.rides.push(rideIndex);
       rides[rideIndex].served = true;
       rideIndex += 1;
+      console.log("assignment 1");
     });
   } else {
     while (car.rides.length === 0) {
@@ -163,12 +167,16 @@ export function assignRideForCar(car, vehicles, rides, time, onStartBonus) {
         const closestCar = findClosestCar(ride, rides, vehicles, time);
         closestCar.rides.push(ride.id);
         ride.served = true;
+        console.log("closest car:");
+        console.log(closestCar);
+        console.log("assignment 2");
         return;
       }
       const hungarianCar = findCarUsingHungarian(vehicles, rides, time, onStartBonus);
       hungarianCar.rides.push(ride.id);
       hungarianCar.status = 'Moving';
       ride.served = true;
+      console.log("assignment 3");
     }
   }
 }

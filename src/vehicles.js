@@ -4,7 +4,7 @@ import {
   xPixelToCoord,
   yPixelToCoord,
   distance,
-  getUnservedRides,
+  getRideWithId,
 } from './util';
 import { assignRideForCar } from './carSelection';
 
@@ -123,7 +123,15 @@ function takeNextRide(vehicles, driverID, rides, time) {
   if (car.rides.length === 0) {
     assignRideForCar(car, vehicles, rides, time, START_ON_TIME_BONUS);
   }
-  const ride = rides[car.rides.shift()];
+  //const ride = rides[car.rides.shift()];
+  const rideID = car.rides.shift();
+  console.log(rideID);
+  const ride = getRideWithId(rides, rideID);
+  console.log(ride);
+  console.log("driver id and ride in takeNextRide:");
+  console.log(driverID);
+  console.log(ride);
+  console.log("====");
   if (ride == null) { // there are no more rides that need serving
     car.currentRide = null;
     car.status = 'Finished';
@@ -166,9 +174,9 @@ export function move(vehicles, driverID, rides, xSpeed, ySpeed, time) {
   const vehicle = vehicles[driverID];
   if (vehicle.status === 'Finished') {
     return;
-
   }
-  if (vehicle.destination === '') { // first assignments
+
+  if (vehicle.destination === '' || vehicle.currentRide === null) { // first assignments
     takeNextRide(vehicles, driverID, rides, time);
   } else if (destinationReached(vehicle) && clientReady(vehicle)) {
     assignDestination(vehicle, vehicles, rides, time);

@@ -16,11 +16,12 @@ const defaultRides = [
 ];
 
 function setVehiclesMoving(vehicles) {
-  console.log("seting moving");
   console.log(vehicles);
+  console.log("seting moving");
   vehicles.forEach((veh) => {
-    //veh.status = 'Moving';
+    veh.status = 'Moving';
   });
+  console.log(vehicles);
 }
 
 export function generateRideRequest(rows, columns, currentTime, vehicles) {
