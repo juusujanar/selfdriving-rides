@@ -123,15 +123,8 @@ function takeNextRide(vehicles, driverID, rides, time) {
   if (car.rides.length === 0) {
     assignRideForCar(car, vehicles, rides, time, START_ON_TIME_BONUS);
   }
-  //const ride = rides[car.rides.shift()];
   const rideID = car.rides.shift();
-  console.log(rideID);
   const ride = getRideWithId(rides, rideID);
-  console.log(ride);
-  console.log("driver id and ride in takeNextRide:");
-  console.log(driverID);
-  console.log(ride);
-  console.log("====");
   if (ride == null) { // there are no more rides that need serving
     car.currentRide = null;
     car.status = 'Finished';
