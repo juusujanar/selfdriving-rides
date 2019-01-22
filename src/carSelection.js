@@ -161,12 +161,12 @@ export function assignRideForCar(car, vehicles, rides, time) {
       const ride = newRides[0];
       if (newRides.length === 1) {
         const closestCar = findClosestCar(ride, rides, vehicles, time);
-        closestCar.rides.push(ride.id);
+        closestCar.rides.push(ride.order);
         ride.served = true;
         return;
       }
       const hungarianCar = findCarUsingHungarian(vehicles, rides, time);
-      hungarianCar.rides.push(ride.id);
+      hungarianCar.rides.push(ride.order);
       ride.served = true;
     }
   }

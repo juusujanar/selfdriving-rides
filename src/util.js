@@ -61,6 +61,12 @@ export function distance(a, b, x, y) {
   return Math.abs(a - x) + Math.abs(b - y);
 }
 
+function updateOrderupdateOrder(rides) {
+  for (let i = 0; i < rides.length; i++) {
+    rides[i].order = i;
+  }
+}
+
 export function sortRides(rides) {
   // Sorts to ascending order
   rides.sort((a, b) => {
@@ -72,4 +78,5 @@ export function sortRides(rides) {
     }
     return 0;
   });
+  updateOrderupdateOrder(rides);
 }
