@@ -120,7 +120,7 @@ function clientReady(car) {
 function takeNextRide(vehicles, driverID, rides, time) {
   const car = vehicles[driverID];
   if (car.rides.length === 0) {
-    assignRideForCar(car, vehicles, rides, time);
+    assignRideForCar(car, vehicles, rides, time, START_ON_TIME_BONUS);
   }
 
   const ride = rides[car.rides.shift()];

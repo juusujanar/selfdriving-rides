@@ -53,29 +53,29 @@ function getDestinationReachTime(driver, rides, destination, time) {
 }
 
 
-function getMaxPointsForRide(ride, rides, driver, time) {
+function getMaxPointsForRide(ride, rides, driver, time, onStartBonus) {
   // reversed points system for Hungarian algorithm. Smaller score is better
-  let score = 3;
+  let score = 100;
   const destReachTime = getDestinationReachTime(driver, rides, ride, time);
-  const destEndpointReachTime = destReachTime
-      + distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
+  const rideDistance = distance(ride.xStart, ride.yStart, ride.xEnd, ride.yEnd);
+  const destEndpointReachTime = destReachTime + rideDistance;
 
   if (destReachTime <= ride.earliestStart) {
-    score -= 1;
+    score -= onStartBonus;
   }
   if (destEndpointReachTime <= ride.latestFinish) {
-    score -= 2;
+    score -= rideDistance;
   }
   return score;
 }
 
-function getPointsGivingRides(drivers, rides, nextRides, time) {
+function getPointsGivingRides(drivers, rides, nextRides, time, onStartBonus) {
   const result = [];
   nextRides.forEach((nextRide) => {
     const rideResult = [];
     for (let i = 0; i < drivers.length; i++) {
       const driver = drivers[i];
-      const points = getMaxPointsForRide(nextRide, rides, driver, time);
+      const points = getMaxPointsForRide(nextRide, rides, driver, time, onStartBonus);
       rideResult.push([driver, points]);
     }
     result.push([nextRide, rideResult]);
@@ -119,9 +119,9 @@ function getNextRidesToCheck(vehciles, rides) {
   return nextRidesWithEqualStartTimeRides(nextRides, newRides);
 }
 
-function findCarUsingHungarian(vehicles, rides, time) {
+function findCarUsingHungarian(vehicles, rides, time, onStartBonus) {
   const nextRides = getNextRidesToCheck(vehicles, rides);
-  const nextRidesScores = getPointsGivingRides(vehicles, rides, nextRides, time);
+  const nextRidesScores = getPointsGivingRides(vehicles, rides, nextRides, time, onStartBonus);
   const ridesMatrix = getRidesMatrix(nextRidesScores);
   const resultMatrix = munkres(ridesMatrix);
   return vehicles[resultMatrix[resultMatrix.length - 1][1]];
@@ -140,7 +140,7 @@ function findClosestCar(destination, rides, vehicles, time) {
   return best;
 }
 
-export function assignRideForCar(car, vehicles, rides, time) {
+export function assignRideForCar(car, vehicles, rides, time, onStartBonus) {
   let newRides = getUnservedRides(rides);
 
   // it is the first assignment so every car gets just one endpoint
@@ -165,7 +165,7 @@ export function assignRideForCar(car, vehicles, rides, time) {
         ride.served = true;
         return;
       }
-      const hungarianCar = findCarUsingHungarian(vehicles, rides, time);
+      const hungarianCar = findCarUsingHungarian(vehicles, rides, time, onStartBonus);
       hungarianCar.rides.push(ride.order);
       ride.served = true;
     }
